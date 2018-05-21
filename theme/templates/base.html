@@ -1,0 +1,21 @@
+{# -*- engine: django -*- #}
+<!doctype html>
+<html class="no-js" lang="{{ DEFAULT_LANG }}">
+  {% include 'includes/base/head.html' %}
+  <body>
+    <div class="header-grid-container">
+      {% block banner %}
+        {% include 'includes/base/banner.html' %}
+      {% endblock banner %}
+    </div>
+    {% block navbar %}
+      {% include 'includes/base/navbar.html' %}
+    {% endblock navbar %}
+    <div class="content-grid-container">
+      {% block content %}
+      {% endblock content %}
+    </div>
+    {% include 'includes/base/footer.html' %}
+    {% include 'includes/base/scripts.html' %}
+  </body>
+</html>

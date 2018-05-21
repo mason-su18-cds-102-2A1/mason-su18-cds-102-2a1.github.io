@@ -1,0 +1,9 @@
+{# -*- engine: django -*- #}
+{% extends "base.html" %}
+{% from 'macros/cards.html' import wookmark_card %}
+
+{% block content %}
+  <div class="static-page">
+    {% include 'includes/frontpage/labs_schedule.html' %}
+  </div>
+{% endblock content %}
