@@ -11,6 +11,9 @@
 {% if article.category is equalto "Labs" %}
   {% block banner %}{% endblock banner %}
   {% block navbar %}{% endblock navbar %}
+{% else %}
+  {% block css_labs %}
+  {% endblock css_labs %}
 {% endif %}
 
 {% block content %}
