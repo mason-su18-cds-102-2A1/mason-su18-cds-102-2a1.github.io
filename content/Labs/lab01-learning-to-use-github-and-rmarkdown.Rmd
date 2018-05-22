@@ -8,12 +8,6 @@ Summary: Introducing R, RStudio, Github and RMarkdown!
 Show_summary: true
 Show_link: true
 
-```{css lab-1-custom}
-iframe {
-  margin-bottom: 2em;
-}
-```
-
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   echo = TRUE, eval = TRUE, fig.width = 6, warning = FALSE,
@@ -29,14 +23,9 @@ icon_pdf <- '<i class="fas fa-file-pdf" data-fa-transform="grow-16"></i>&nbsp;'
 icon_github <- '<i class="fab fa-github-alt" data-fa-transform="grow-16"></i>&nbsp;'
 ```
 
-<div id="boxedtext">
-**Welcome to CDS-102!**
-
-This lab course is the complement to CDS-101: Introduction to Computational and Data Sciences, providing you with additional opportunities to practice and hone your skills.
-This first lab will serve as a general introduction to the major tools and platforms that we will be using throughout the semester, which are R, RStudio, and Git/Github.
-R is the name of the programming language itself and RStudio is a convenient interface, and both are installed on the lab computers.
-For this first lab, we request that you use the lab computers instead of your personal laptop, as installing and setting up everything takes some time.
-</div>
+> This first lab will serve as a general introduction to the major tools and platforms that we will be using throughout the semester, which are R, RStudio, and Git/Github.
+> R is the name of the programming language itself and RStudio is a convenient interface, and both are installed on the lab computers.
+> For this first lab, we request that you login to the RStudio Server <https://rstudio.cos.gmu.edu>, as installing and setting up everything takes some time.
 
 ## RStudio
 
@@ -136,13 +125,13 @@ You may even want to print it out before next class so that you can easily refer
 2.  Fill in your name and other information in the spaces at the top of the file if you haven't already.
     Then, click the the "knit" icon just above the editing window (if a drop-down menu appears, choose "knit to HTML").
     Based on the output that you see, explain what the `##` and `####` symbols are doing to the text.
-    
+
 Let's write some more Markdown and see what it does.
 
 3.  Type the code in the box below into your lab report file exactly you see it.
     Then, knit the file again and look at the output.
     Write a short explanation of what each markup symbol does.
-    
+
 ```
 *What happens when you surround text with one-star pairs?*
 
@@ -216,7 +205,7 @@ You would push your commits from the first computer, move to the second computer
 Now that we've saved and synchronized our work on Github, let's return to RMarkdown.
 During the rest of the lab, you are encouraged to commit early and commit often.
 
-4.  You can create tables using Markdown, type in the following and knit to see it looks like.
+5.  You can create tables using Markdown, type in the following and knit to see it looks like.
     Do both tables look the same after being rendered?
     What are the snippets below each table doing?
     
@@ -236,20 +225,20 @@ Table: The table with poor spacing
 Table: The table with good spacing
 ```
 
-5.  Copy-and-paste one of the above tables and then add a fifth column.
+6.  Copy-and-paste one of the above tables and then add a fifth column.
     There should be text in both rows of the fifth column.
-    
+
 Of course, there isn't much point to this if we don't include code snippets.
 Let's try a couple of different commands, shall we?
 
-6.  Type the following code block into your file, then click the green "play" icon that appears to the right of your code block.
+7.  Type the following code block into your file, then click the green "play" icon that appears to the right of your code block.
     Explain what you're getting as output.
 
 <pre><code>```{r}
 qplot(x = displ, y = hwy, data = mpg)
 ```</code></pre>
 
-7.  What output do you get if you type the following in a code block?
+@.  What output do you get if you type the following in a code block?
     Do you see a connection between certain parts of this output and the one from the previous question?
     If so, what are they?
     If not, why isn't there a connection?
@@ -273,21 +262,25 @@ Then, navigate to **your copy** of the [Github repository][github-classroom] you
 You should see your repository, along with the updated files that you just synchronized to Github.
 Confirm that your files are up-to-date, and then do the following steps:
 
-1.  Click the *Pull Requests* tab near the top of the page.
+:::::{.pull-request}
 
-2.  Click the green button that says "New pull request".
+*   Click the *Pull Requests* tab near the top of the page.
 
-3.  Click the dropdown menu button labeled "base:", and select the option `starting`.
+*   Click the green button that says "New pull request".
 
-4.  Confirm that the dropdown menu button labeled "compare:" is set to `master`.
+*   Click the dropdown menu button labeled "base:", and select the option `starting`.
 
-5.  Click the green button that says "Create pull request".
+*   Confirm that the dropdown menu button labeled "compare:" is set to `master`.
 
-6.  Give the *pull request* the following title: [Submission: Homework 5, FirstName LastName]{.monospace}, replacing [FirstName]{.monospace} and [LastName]{.monospace} with your actual first and last name.
+*   Click the green button that says "Create pull request".
 
-7.  In the messagebox, write: [My lab report is ready for grading \@jkglasbrenner]{.monospace}.
+*   Give the *pull request* the following title: [Submission: Homework 5, FirstName LastName]{.monospace}, replacing [FirstName]{.monospace} and [LastName]{.monospace} with your actual first and last name.
 
-8.  Click "Create pull request" to lock in your submission.
+*   In the messagebox, write: [My lab report is ready for grading \@jkglasbrenner]{.monospace}.
+
+*   Click "Create pull request" to lock in your submission.
+
+:::::
 
 
 ## Credits
@@ -296,6 +289,7 @@ This lab is licensed under a [Creative Commons Attribution-NonCommercial-ShareAl
 Adapted by James Glasbrenner for CDS-102 from [Lab 0 - Introduction to R and RStudio][lab0-duke-sta104] by [Mine Çetinkaya-Rundel](https://stat.duke.edu/~mc301) and the [Github Classroom Guide for Students][github-classroom-guide-students] by [Jacob Fiksel][github-jfiksel].
 
 [github-jfiksel]:                  https://github.com/jfiksel
+[github-classroom]:                #
 [lab0-duke-sta104]:                https://www2.stat.duke.edu/courses/Summer15/sta104.01-1/post/labs/lab0.html
 [rstudio-cheatsheet]:              http://summer18.cds101.com/doc/rstudio-IDE-cheatsheet.pdf
 [github-classroom-guide-students]: https://github.com/jfiksel/github-classroom-for-students
