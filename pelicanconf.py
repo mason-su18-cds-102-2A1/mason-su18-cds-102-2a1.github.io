@@ -43,6 +43,7 @@ IMAGES_PATH = "img"
 STATIC_PATHS = [
     "doc",
     "files",
+    "slides",
     IMAGES_PATH,
 ]
 PAGE_PATHS = ["pages"]
