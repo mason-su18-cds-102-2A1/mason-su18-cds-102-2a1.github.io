@@ -8,7 +8,7 @@ AUTHOR = "Dr. Glasbrenner"
 SITENAME = "CDS-102: Introduction to Computational and Data Sciences Lab"
 SITEURL = ""
 SLACK_URL = "https://masoncds101.slack.com/messages/GATM36HCH"
-GITHUB_URL = "https://github.com/mason-su18-cds-102-2a1/su18-cds-102-2a1"
+GITHUB_URL = "https://github.com/mason-su18-cds-102-2a1/website"
 UNIVERSITYURL = "https://gmu.edu"
 TIMEZONE = "America/New_York"
 DEFAULT_LANG = "en"
@@ -82,7 +82,6 @@ PLUGINS = [
     "custom_article_urls",
     "pandoc_reader",
     "rmd_reader",
-    "pelican-plugin-tidy-html",
 ]
 
 # Plugin: Custom Article URLs
