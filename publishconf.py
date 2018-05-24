@@ -12,7 +12,7 @@ sys.path.append(os.curdir)
 
 from pelicanconf import *
 
-SITEURL = "http://summer18.cds101.com"
+SITEURL = "https://mason-su18-cds-102-2a1.github.io"
 RELATIVE_URLS = False
 
 FEED_ALL_ATOM = "feeds/all.atom.xml"
