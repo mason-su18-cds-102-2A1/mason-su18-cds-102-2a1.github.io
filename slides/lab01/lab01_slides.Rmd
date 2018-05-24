@@ -18,7 +18,7 @@ class: center, middle, title-slide
 
 .upper-right[
 ```{r logo, eval = TRUE, echo = FALSE, out.width = "605px"}
-knitr::include_graphics("img/cds-101-logo.png")
+knitr::include_graphics("img/cds-102-2a1-logo.png")
 ```
 ]
 
