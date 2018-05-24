@@ -265,7 +265,7 @@ Confirm that your files are up-to-date, and then do the following steps:
 
 *   Click the green button that says "Create pull request".
 
-*   Give the *pull request* the following title: [Submission: Homework 5, FirstName LastName]{.monospace}, replacing [FirstName]{.monospace} and [LastName]{.monospace} with your actual first and last name.
+*   Give the *pull request* the following title: [Submission: Lab 1, FirstName LastName]{.monospace}, replacing [FirstName]{.monospace} and [LastName]{.monospace} with your actual first and last name.
 
 *   In the messagebox, write: [My lab report is ready for grading \@jkglasbrenner]{.monospace}.
 
@@ -279,5 +279,5 @@ Adapted by James Glasbrenner for CDS-102 from [Lab 0 - Introduction to R and RSt
 
 [github-jfiksel]:                  https://github.com/jfiksel
 [lab0-duke-sta104]:                https://www2.stat.duke.edu/courses/Summer15/sta104.01-1/post/labs/lab0.html
-[rstudio-cheatsheet]:              http://summer18.cds101.com/doc/rstudio-IDE-cheatsheet.pdf
+[rstudio-cheatsheet]:              /doc/rstudio-IDE-cheatsheet.pdf
 [github-classroom-guide-students]: https://github.com/jfiksel/github-classroom-for-students
