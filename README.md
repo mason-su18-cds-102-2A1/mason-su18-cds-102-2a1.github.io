@@ -1,6 +1,6 @@
 # CDS-102: Introduction to Computational and Data Sciences Lab
 
-Instructor materials for the CDS-102 Lab during the 2018 summer semester (Session A) at George Mason University.
+Materials for the CDS-102 Lab during the 2018 summer semester (Session A) at George Mason University.
 
 ## License
 
