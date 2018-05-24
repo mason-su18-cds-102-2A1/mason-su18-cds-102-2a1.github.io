@@ -33,7 +33,7 @@ The lab instructor will guide you through how to launch RStudio for the first ti
 When you launch RStudio, you will see an interface that looks something like this:
 
 ```{r rstudio-interface, echo = FALSE, out.width = "100%"}
-knitr::include_graphics("img/rstudio_interface.png")
+knitr::include_graphics("../img/rstudio_interface.png")
 ```
 
 The panel in the upper right contains your workspace as well as a history of the commands that you've previously entered.
@@ -62,13 +62,7 @@ Please sign up for an account on [Github](http://github.com) using your Mason em
 If you already have a Github account, please update your profile to use your Mason email address.
 If you would prefer to not do this, then create a second account using your Mason email address instead.
 
-Once you and your lab partner have each created an account, [click here to access the template file for Lab 1]().
-When you access the link, you will be given the option to either create a new group or join an existing one.
-If your partner has created a group, then you can join it.
-If your partner hasn't created a group yet, then create a new one and name your team using your last names.
-For example, if your last names are Smith and Johnson, then name your group "Smith-and-Johnson", note that you should use hyphens instead of spaces.
-
-Enter the Lab01 repository on GitHub (this is still online).
+Obtain the Lab01 repository on GitHub through the link in Slack.
 Click "Clone or Download", and make sure it says "Clone with SSH" in bold in the top left of the pop-up box.
 If not, click on the blue "use SSH" button on the top right of the pop-up box.
 Now copy the link in the box to your clipboard.
@@ -88,8 +82,6 @@ Navigate to the project directory and double click on the .Rproj file.
 Note that if you received an error in the above steps, you may have to clone with HTTPS instead of SSH.
 You can do this by again clicking on the "Clone or Download" button in the repository page, then clicking "Use HTTPS" in the top right of the pop-up box.
 Now copy the link and repeat this step.
-
-1.  Once you have your `Lab01` template file open in RStudio, write down the name you selected for your team.
 
 ## Getting familiar with RMarkdown
 
