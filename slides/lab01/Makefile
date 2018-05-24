@@ -1,4 +1,4 @@
-include ../Makefile
+include ../make.inc
 
 XARINGAN		=	lab01_slides.html
 
