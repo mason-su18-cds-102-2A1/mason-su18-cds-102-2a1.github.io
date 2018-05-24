@@ -33,7 +33,7 @@ The lab instructor will guide you through how to launch RStudio for the first ti
 When you launch RStudio, you will see an interface that looks something like this:
 
 ```{r rstudio-interface, echo = FALSE, out.width = "100%"}
-knitr::include_graphics("../img/rstudio_interface.png")
+knitr::include_graphics("img/rstudio_interface.png")
 ```
 
 The panel in the upper right contains your workspace as well as a history of the commands that you've previously entered.
