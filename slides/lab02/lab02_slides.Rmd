@@ -1,0 +1,58 @@
+---
+title: "CDS-102 <br> Lab 2 <br> Exploration by visualization: the Galton dataset"
+author: Dr. Glasbrenner
+date: May 29, 2018
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [libs/css/remark-default.css, libs/css/remark-cds102.css, libs/css/remark-cds102-fonts.css]
+    seal: false
+    chakra: libs/js/vendor/remark/remark-latest.min.js
+    nature:
+      highlightStyle: default
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+class: center, middle, title-slide
+
+.upper-right[
+```{r logo, eval = TRUE, echo = FALSE, out.width = "605px"}
+knitr::include_graphics("img/cds-102-2a1-logo.png")
+```
+]
+
+.lower-right[
+```{r cc-by-sa, eval = TRUE, echo = FALSE, out.width = "88px"}
+knitr::include_graphics("img/cc-by-sa.png")
+```
+
+These slides are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+]
+
+# Lab 2 — Exploration by visualization: the Galton dataset
+.title-hline[
+## May 29, 2018
+]
+
+---
+
+class: middle, center, inverse
+
+#
+
+```{r setup, include = FALSE, eval = TRUE, echo = FALSE}
+# DO NOT ALTER THIS CHUNK
+knitr::opts_chunk$set(
+  echo = TRUE, eval = TRUE, fig.width = 5, warning = FALSE,
+  message = FALSE, dev = "svg",
+  fig.asp = 0.618, out.width = "80%", dpi = 120,
+  fig.align = "center", cache = FALSE
+)
+options(htmltools.dir.version = FALSE)
+# Load required packages
+suppressPackageStartupMessages(library(tidyverse, quietly = TRUE))
+```
+
+---
+
