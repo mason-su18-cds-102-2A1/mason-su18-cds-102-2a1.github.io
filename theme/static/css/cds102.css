@@ -41,7 +41,7 @@ body {
 :not(.footnotes) > li ol, :not(.footnotes) > li ul {margin-top:6px;}
 :not(.footnotes) > ol ol li:last-child {margin-bottom:0;}
 
-.pull-request ul {
+.pull-request ul, .additional-questions ul {
   list-style: decimal;
 }
 
