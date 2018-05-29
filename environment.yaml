@@ -5,6 +5,7 @@ channels:
   - conda-forge
 dependencies:
   - anaconda=custom=py36hbbc8b67_0
+  - gxx_linux-64=7.2.0=he93fcd3_8
   - pandoc=2.2.1=0
   - rstudio=1.1.423=hcfd39f1_0
   - pelican
