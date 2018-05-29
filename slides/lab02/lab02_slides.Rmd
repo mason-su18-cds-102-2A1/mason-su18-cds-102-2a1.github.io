@@ -56,3 +56,30 @@ suppressPackageStartupMessages(library(tidyverse, quietly = TRUE))
 
 ---
 
+# Why data visualization?
+
+.valign-slide[
+* Why is data visualization an important topic?
+
+* Why start with this? Aren't plots really easy now that we all have computers?
+
+* Aren't plots and figures one of the *last* things that we do for a project or lab report?
+]
+
+---
+
+# .font90[A visualization is worth a thousand words]
+
+.footnote[Why do buses bunch? http://setosa.io/bus/]
+
+<iframe src="http://setosa.io/bus/" height="500" width="800"></iframe>
+
+---
+
+count: false
+
+# .font90[A visualization is worth a thousand words]
+
+.footnote[U.S. Age Pyramid Becomes a Rectangle]
+
+<iframe src="http://www.pewresearch.org/next-america/#Two-Dramas-in-Slow-Motion" height="500" width="800"></iframe>
