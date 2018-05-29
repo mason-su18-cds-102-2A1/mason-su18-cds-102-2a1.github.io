@@ -108,7 +108,7 @@ However, putting a line right below it will not start a new paragraph.
 
 Let's get some practice by typing in some examples!
 
-::::: {.callout .primary}
+::::: {.callout .secondary}
 There is an [official cheatsheet available for you to download][rstudio-cheatsheet].
 It's recommended that you have this available to you at all times.
 You may even want to print it out before next class so that you can easily reference it.
