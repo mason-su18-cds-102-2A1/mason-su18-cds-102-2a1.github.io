@@ -111,7 +111,7 @@ Let's see what the `fill` argument does to our histogram:
 @histogram-fill.  Write the following code in your lab report:
 
     ```r
-    ggplot(data = iris) +
+    ggplot(data = galton) +
       geom_histogram(
         mapping=aes(x = height, fill = sex), binwidth = 1, alpha = 0.5,
         position="identity"
