@@ -87,7 +87,7 @@
 &lt;p&gt;It is simple to add additional arguments to the aesthetic input &lt;code&gt;aes()&lt;/code&gt; that change the way data are shown, which can reveal trends that were previously hidden from view. Let’s see what the &lt;code&gt;fill&lt;/code&gt; argument does to our&amp;nbsp;histogram:&lt;/p&gt;
 &lt;ol start="3" class="example" type="1"&gt;
 &lt;li&gt;&lt;p&gt;Write the following code in your lab&amp;nbsp;report:&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = iris) +
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = galton) +
   geom_histogram(
     mapping=aes(x = height, fill = sex), binwidth = 1, alpha = 0.5,
     position=&amp;quot;identity&amp;quot;
