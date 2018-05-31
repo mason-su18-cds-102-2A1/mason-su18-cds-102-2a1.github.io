@@ -1,5 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>CDS-102: Introduction to Computational and Data Sciences Lab</title><link href="https://mason-su18-cds-102-2a1.github.io/" rel="alternate"></link><link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" rel="self"></link><id>https://mason-su18-cds-102-2a1.github.io/</id><updated>2018-05-29T13:30:00-04:00</updated><entry><title>Exploration by visualization: the Galton dataset</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-02-exploration-by-visualization-the-galton-dataset/" rel="alternate"></link><published>2018-05-29T13:30:00-04:00</published><updated>2018-05-29T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-05-29:/labs/lab-02-exploration-by-visualization-the-galton-dataset/</id><summary type="html">Explore the Galton dataset using data&amp;nbsp;visualization.</summary><content type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>CDS-102: Introduction to Computational and Data Sciences Lab</title><link href="https://mason-su18-cds-102-2a1.github.io/" rel="alternate"></link><link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" rel="self"></link><id>https://mason-su18-cds-102-2a1.github.io/</id><updated>2018-05-31T13:30:00-04:00</updated><entry><title>Wrangling sales data</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-03-wrangling-sales-data/" rel="alternate"></link><published>2018-05-31T13:30:00-04:00</published><updated>2018-05-31T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-05-31:/labs/lab-03-wrangling-sales-data/</id><summary type="html">Use &lt;span style="monospace"&gt;dplyr&lt;/span&gt; to transform and analyze sales&amp;nbsp;data</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;This week’s lab will introduce you to data transformations using the &lt;span class="monospace"&gt;dplyr&lt;/span&gt; library, which is loaded as part of &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;. To keep things from becoming too complicated, we practice these commands on a small, synthetic dataset that represents sales of office&amp;nbsp;supplies.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="what-is-data-wrangling"&gt;What is “data&amp;nbsp;wrangling”?&lt;/h2&gt;
+&lt;p&gt;The previous lab focused on constructing visualizations using the &lt;code&gt;ggplot2&lt;/code&gt; library. The dataset used for that lab, the &lt;code&gt;galton&lt;/code&gt; dataset, was selected because it was relatively small in size and could be visualized in interesting ways without the need for additional processing. It would certainly be nice if all datasets came in such a form! However, in reality, many datasets need cleaning and to be transformed before you can create a meaningful visualization or answer a question. The dataset need not even be messy; datasets that have been preprocessed and are clean and tidy still may require transformations. The full pipeline for obtaining data, cleaning it up, and transforming it is informally referred to as “data wrangling”, which is summarized in the figure from &lt;a href="http://r4ds.had.co.nz/wrangle-intro.html"&gt;&lt;em&gt;R for Data Science&lt;/em&gt;&lt;/a&gt;&amp;nbsp;below:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://mason-su18-cds-102-2a1.github.io/img/r4ds_data_wrangling.png" title="plot of chunk data-wrangling-figure" alt="plot of chunk data-wrangling-figure" width="60%" style="display: block; margin: auto;" /&gt;&lt;/p&gt;
+&lt;p&gt;We start with the &lt;em&gt;transform&lt;/em&gt; part of the data wrangling pipeline, which relies on commands that are part of the &lt;span class="monospace"&gt;dplyr&lt;/span&gt; package, itself part of &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;. Like many of the functions available in the &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;, the command names provide us with clues as to what they do. If you have any prior experience with spreadsheeting software such as Microsoft Excel, you will probably find the commands in &lt;span class="monospace"&gt;dplyr&lt;/span&gt; to be&amp;nbsp;familiar.&lt;/p&gt;
+&lt;h2 id="about-this-weeks-dataset"&gt;About this week’s&amp;nbsp;dataset&lt;/h2&gt;
+&lt;p&gt;This is a synthetic dataset that contains sales data of office supplies to different regions of the United States. The dataset is stored in the variable &lt;code&gt;office_supplies&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="variables"&gt;Variables&lt;/h3&gt;
+&lt;p&gt;This is a tabular dataset with 43 observations on the following&amp;nbsp;variables:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class="header"&gt;
+&lt;th&gt;Variable&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;order_date&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;date&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;The date the office supplies order was placed&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;region&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;chr&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Shipping region in United States&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;representative&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;chr&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Name of sales representative&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;item&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;chr&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Item ordered&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;units&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;int&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;How many units of item were sold&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;unit_price&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;dbl&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Price per unit of item&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Like in previous labs, it’s recommended that you take a first look at the dataset by viewing it by running &lt;code&gt;View(office_supplies)&lt;/code&gt; in your &lt;em&gt;Console&lt;/em&gt;&amp;nbsp;window.&lt;/p&gt;
+&lt;h2 id="subsetting-over-variables"&gt;Subsetting over&amp;nbsp;variables&lt;/h2&gt;
+&lt;p&gt;Let’s start with the &lt;code&gt;select()&lt;/code&gt; function. The &lt;code&gt;select()&lt;/code&gt; function &lt;em&gt;selects&lt;/em&gt; columns from a dataset, which is useful when you’re working with a dataset that contains dozens of&amp;nbsp;variables.&lt;/p&gt;
+&lt;ol class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Try running the following&amp;nbsp;code:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  select(representative)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Based on the output, explain what happens when you run this&amp;nbsp;command.&lt;/p&gt;
+&lt;p&gt;Try putting an additional column name inside the parentheses of the &lt;code&gt;select()&lt;/code&gt; command (don’t forget the comma!). What does this&amp;nbsp;do?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="callout secondary"&gt;
+&lt;p&gt;The strange looking symbol &lt;code&gt;%&amp;gt;%&lt;/code&gt; is called the &lt;strong&gt;pipe&lt;/strong&gt;, and it is a handy way to pass a dataset through a chain of&amp;nbsp;commands.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are multiple ways to specify columns with the &lt;code&gt;select()&lt;/code&gt; command. Let’s explore a couple of those&amp;nbsp;ways.&lt;/p&gt;
+&lt;ol start="2" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Copy the code you wrote in &lt;strong&gt;Exercise 1&lt;/strong&gt; and replace &lt;code&gt;representative&lt;/code&gt; with &lt;code&gt;representative:unit_price&lt;/code&gt;. What does the colon &lt;code&gt;:&lt;/code&gt; do?&lt;/p&gt;
+&lt;p&gt;Next, try putting a minus sign in front of the column names, such as &lt;code&gt;-representative&lt;/code&gt; or &lt;code&gt;-representative:-unit_price&lt;/code&gt;. How does the minus sign affect the&amp;nbsp;output?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="sorting-data"&gt;Sorting&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;The sort operation is a common and indispensible operation for organizing data, and the function from &lt;span class="monospace"&gt;dplyr&lt;/span&gt; that allows us to sort is called &lt;code&gt;arrange()&lt;/code&gt;. &lt;code&gt;arrange()&lt;/code&gt; sorts columns with textual data (&lt;span class="monospace"&gt;chr&lt;/span&gt; data type) into alphabetical order and sorts numerical data into numerical order. Try running the following&amp;nbsp;code:&lt;/p&gt;
+&lt;ol start="3" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Run the following&amp;nbsp;code:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  arrange(region, item)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Based on the output, does it look like both the &lt;code&gt;region&lt;/code&gt; and &lt;code&gt;item&lt;/code&gt; columns were sorted? Which column was sorted first? What happens if you reverse the order of the columns in your code&amp;nbsp;snippet?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;By default, &lt;code&gt;arrange()&lt;/code&gt; will sort data in ascending order. The function &lt;code&gt;desc()&lt;/code&gt; can be used to sort in descending order, and we can mix-and-match which columns are ascending and which columns as&amp;nbsp;descending.&lt;/p&gt;
+&lt;ol start="4" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Sort using the variable &lt;code&gt;order_date&lt;/code&gt;. Then, make a copy of the code block you just wrote and then wrap the column name with &lt;code&gt;desc()&lt;/code&gt;, like so: &lt;code&gt;desc(order_date)&lt;/code&gt;. Verify that &lt;code&gt;desc()&lt;/code&gt; sorted the data in the reverse&amp;nbsp;order.&lt;/p&gt;
+&lt;p&gt;Copy the starting code from the previous example, and adapt it so that &lt;code&gt;region&lt;/code&gt; is sorted in &lt;em&gt;ascending&lt;/em&gt; order and &lt;code&gt;item&lt;/code&gt; is sorted in &lt;em&gt;descending&lt;/em&gt; order. Write it down and get the&amp;nbsp;output.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="transforming-data"&gt;Transforming&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;Let’s now try an example that uses the &lt;code&gt;mutate()&lt;/code&gt; function, which is a little more complex. &lt;code&gt;mutate()&lt;/code&gt; lets us &lt;strong&gt;transform&lt;/strong&gt; our dataset by applying the same operation to each row in the dataset and appending the results as a &lt;em&gt;new&lt;/em&gt; column. This would allow you to create a new column in your dataset called &lt;code&gt;total_price&lt;/code&gt; that contains the toal price of each order. To Try running the following&amp;nbsp;code:&lt;/p&gt;
+&lt;ol start="5" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;To calculate the total price of an order, for each row we need to multiply the number of units sold by the unit price. Do this by running the following &lt;code&gt;mutate()&lt;/code&gt; command:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  mutate(total_price = units * unit_price)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After confirming that the above command works, copy this code into a new code block and remove &lt;code&gt;total_price =&lt;/code&gt; from the function input. Does the code still run? If so, what (if anything) is different in the output? What if you ran &lt;code&gt;mutate(final_price = units * unit_price)&lt;/code&gt;?&lt;/p&gt;
+&lt;p&gt;Based on these outputs, describe what the &lt;code&gt;total_price =&lt;/code&gt; part of the command seems to be&amp;nbsp;doing.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;We are not limited to only one input at a time in &lt;code&gt;mutate()&lt;/code&gt;. As long as we separate each input by a comma, we can put as many inputs as we want in the &lt;code&gt;mutate()&lt;/code&gt; function!&lt;/p&gt;
+&lt;ol start="6" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Starting again with this&amp;nbsp;example,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  mutate(total_price = units * unit_price)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;modify it so that there’s a second input in &lt;code&gt;mutate()&lt;/code&gt;, &lt;code&gt;shipping_date = order_date + 2&lt;/code&gt;. Does this add another column? What has happened by adding the number 2 to the rows in the &lt;code&gt;order_date&lt;/code&gt; column?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="immutable-datasets"&gt;Immutable&amp;nbsp;datasets&lt;/h2&gt;
+&lt;p&gt;It’s worth pausing for a moment and asking whether any of these commands are permanently changing the way the dataset looks in &lt;code&gt;office_supplies&lt;/code&gt;. Inspect your dataset using &lt;code&gt;View(office_supplies)&lt;/code&gt; to&amp;nbsp;check.&lt;/p&gt;
+&lt;ol start="7" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Based on what you observe, has the data frame in &lt;code&gt;office_supplies&lt;/code&gt; been updating with each command, or is it&amp;nbsp;unchanged?&lt;/p&gt;
+&lt;p&gt;As a comparison, run the command &lt;code&gt;office_supplies_updated &amp;lt;- mutate(office_supplies, total_price = units * unit_price)&lt;/code&gt; and print out whatever’s in &lt;code&gt;office_supplies_updated&lt;/code&gt;. Has the change stuck&amp;nbsp;now?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="filtering-data"&gt;Filtering&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;Next up is the &lt;code&gt;filter()&lt;/code&gt; function, which provides a ruled-based way to keep a subset of rows and remove the rest. Here we just consider rules that are simple comparisons, which involve the&amp;nbsp;symbols:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;gt;&lt;/code&gt;: greater&amp;nbsp;than&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;gt;=&lt;/code&gt;: greater than or equal&amp;nbsp;to&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;&lt;/code&gt;: less&amp;nbsp;than&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;=&lt;/code&gt;: less than or equal&amp;nbsp;to&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;!=&lt;/code&gt;: not&amp;nbsp;equal&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;==&lt;/code&gt;:&amp;nbsp;equal&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So, for example, a comparison rule that would show us all items that cost more than 16 dollars per unit would be &lt;code&gt;unit_price &amp;gt; 16&lt;/code&gt;. A comparison rule that would find all rows with the representative Susan would be &lt;code&gt;representative == &amp;quot;Susan&amp;quot;&lt;/code&gt; (if you are testing for equality with a column of &lt;span class="monospace"&gt;chr&lt;/span&gt; type, then you need to surround any words or values in the column with quotation marks &lt;code&gt;&amp;quot;like so&amp;quot;&lt;/code&gt;.&amp;nbsp;)&lt;/p&gt;
+&lt;ol start="8" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Give the two code examples a try by running the following two code&amp;nbsp;blcos:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  filter(unit_price &amp;gt; 16)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  filter(representative == &amp;quot;Susan&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After running the above code, figure out how to write a single line of &lt;code&gt;filter()&lt;/code&gt; code that shows us all the items sold by Susan that cost more than 16 dollars. You should be able to do this based on what we’ve seen so far with the other &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;&amp;nbsp;commands,&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Using &lt;code&gt;filter()&lt;/code&gt; is a lot like running an advanced search on a data base, and gives us a convenient way to quickly look up and inspect subsets of&amp;nbsp;data.&lt;/p&gt;
+&lt;ol start="9" class="example" type="1"&gt;
+&lt;li&gt;Write a filter that shows us all the sales that involved the &lt;code&gt;item&lt;/code&gt; “Pen&amp;nbsp;Set”.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="data-aggregation"&gt;Data&amp;nbsp;aggregation&lt;/h2&gt;
+&lt;p&gt;It is common to want to summarize the information contained within a dataset, such as computing sums and averages, or counting how many data points belong to different groups. This is called data aggregation, as it &lt;strong&gt;aggregates&lt;/strong&gt; many data points together and uses them to compute a cetain quantity. We perform data aggregation in R by using the commands &lt;code&gt;group_by()&lt;/code&gt; and &lt;code&gt;summarize()&lt;/code&gt;, which frequently show up as a&amp;nbsp;pair.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;group_by()&lt;/code&gt; command is applied to one or more columns, and allows you create groups that share common values in a column of categorical data. The &lt;code&gt;summarize()&lt;/code&gt; command can be used when you want to do things like calculate the average number of units sold by each representative, or calculate the gross earnings of each &lt;code&gt;item&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start="10" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;group_by()&lt;/code&gt; and &lt;code&gt;summarize()&lt;/code&gt; are functions that are easier to understand using examples. First, run this example where we use &lt;code&gt;mean()&lt;/code&gt; to calculate the average of a&amp;nbsp;column:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  group_by(representative) %&amp;gt;%
+  summarize(avg_units_sold = mean(units))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which representative sold the most units on&amp;nbsp;average?&lt;/p&gt;
+&lt;p&gt;Let’s run another example where we add together the numbers in a column using &lt;code&gt;sum()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  mutate(total_price = units * unit_price) %&amp;gt;%
+  group_by(item) %&amp;gt;%
+  summarize(gross_earnings = sum(total_price))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which item brought in the most gross&amp;nbsp;earnings?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Small changes to how we group our data can have a big impact on what our summary tables look like. This gives us a lot of flexibility in aggregating our data for&amp;nbsp;analysis.&lt;/p&gt;
+&lt;ol start="11" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Take the second code example from &lt;strong&gt;Exercise 10&lt;/strong&gt; and modify it so that it groups over two variables instead of&amp;nbsp;one:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
+  mutate(total_price = units * unit_price) %&amp;gt;%
+  group_by(item, region) %&amp;gt;%
+  summarize(gross_earnings = sum(total_price))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;How did this change the summary table from what you obtained in &lt;strong&gt;Exercise 10&lt;/strong&gt;? Interpret the table you get as&amp;nbsp;output.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="additional-questions"&gt;Additional&amp;nbsp;questions&lt;/h2&gt;
+&lt;div class="additional-questions"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The company wishes to expand their sales to include a new region, Canada. Doing this would require converting the unit prices from &lt;span class="caps"&gt;US&lt;/span&gt; dollars to Canadian Dollars. The current conversion rate is 1 &lt;span class="caps"&gt;US&lt;/span&gt; Dollar = 1.29 Canadian Dollars. So, for example, an item that costs 2.99 &lt;span class="caps"&gt;US&lt;/span&gt; Dollars would convert to &lt;span class="math inline"&gt;\(2.99 &amp;#92;times 1.29 = 3.86\)&lt;/span&gt; Canadian Dollars. Using the &lt;code&gt;mutate()&lt;/code&gt; function, write a code snippet that converts the unit price in &lt;span class="caps"&gt;US&lt;/span&gt; Dollars into Canadian Dollars and stores the result in a new column named &lt;code&gt;unit_price_canadian&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Take the 2nd code example you ran in exercise 10 and assign it to a variable, like&amp;nbsp;so:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;items_gross_earnings &amp;lt;- office_supplies %&amp;gt;%
+  mutate(total_price = units * unit_price) %&amp;gt;%
+  group_by(item) %&amp;gt;%
+  summarize(gross_earnings = sum(total_price))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Use &lt;code&gt;items_gross_earnings&lt;/code&gt; to create a bar chart visualization of the gross earnings per&amp;nbsp;item.&lt;/p&gt;
+&lt;div class="callout secondary"&gt;
+&lt;p&gt;&lt;strong&gt;Hint:&lt;/strong&gt; You will want to use &lt;code&gt;geom_col()&lt;/code&gt; for&amp;nbsp;this.&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id="how-to-submit"&gt;How to&amp;nbsp;submit&lt;/h2&gt;
+&lt;p&gt;When you are ready to submit, be sure to save, commit, and push your final result so that everything is synchronized to Github. Then, navigate to &lt;strong&gt;your copy&lt;/strong&gt; of the Github repository you used for this assignment. You should see your repository, along with the updated files that you just synchronized to Github. Confirm that your files are up-to-date, and then do the following&amp;nbsp;steps:&lt;/p&gt;
+&lt;div class="pull-request"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Click the &lt;em&gt;Pull Requests&lt;/em&gt; tab near the top of the&amp;nbsp;page.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the green button that says “New pull&amp;nbsp;request”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the dropdown menu button labeled “base:”, and select the option &lt;code&gt;starting&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Confirm that the dropdown menu button labeled “compare:” is set to &lt;code&gt;master&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the green button that says “Create pull&amp;nbsp;request”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Give the &lt;em&gt;pull request&lt;/em&gt; the following title: &lt;span class="monospace"&gt;Submission: Lab 3, FirstName LastName&lt;/span&gt;, replacing &lt;span class="monospace"&gt;FirstName&lt;/span&gt; and &lt;span class="monospace"&gt;LastName&lt;/span&gt; with your actual first and last&amp;nbsp;name.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the messagebox, write: &lt;span class="monospace"&gt;My lab report is ready for grading @jkglasbrenner&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Click “Create pull request” to lock in your&amp;nbsp;submission.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id="credits"&gt;Credits&lt;/h2&gt;
+&lt;p&gt;This lab is licensed under a &lt;a href="http://creativecommons.org/licenses/by-sa/4.0/"&gt;Creative Commons Attribution-ShareAlike 4.0 International License&lt;/a&gt;. Exercises and instructions written by James Glasbrenner for &lt;span class="caps"&gt;CDS&lt;/span&gt;-102.&lt;/p&gt;
+</content><category term="lab"></category></entry><entry><title>Exploration by visualization: the Galton dataset</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-02-exploration-by-visualization-the-galton-dataset/" rel="alternate"></link><published>2018-05-29T13:30:00-04:00</published><updated>2018-05-29T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-05-29:/labs/lab-02-exploration-by-visualization-the-galton-dataset/</id><summary type="html">Explore the Galton dataset using data&amp;nbsp;visualization.</summary><content type="html">&lt;blockquote&gt;
 &lt;p&gt;This week’s lab shows you how to use the &lt;span class="monospace"&gt;ggplot2&lt;/span&gt; package to visualize datasets and how visualization plays a crucial role in data&amp;nbsp;exploration.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id="why-data-visualization"&gt;Why data&amp;nbsp;visualization?&lt;/h2&gt;
