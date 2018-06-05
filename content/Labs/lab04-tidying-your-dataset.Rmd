@@ -198,54 +198,92 @@ dataset %>%
 Your should note that the `into` keyword needs to be specified as a vector of strings that you can create using `combine()`.
 :::::
 
-## Exercises
+## Prune the dataset
 
-@.
-    To start, use `separate()` to split the values in the `NAME` column so that each value (separated by [||]{.monospace}) is in a separate column.
-    Name the columns `name`, `BP`, `MF`, `systematic_name`, and `number`.
-    The separator expression you should use is ["\\|\\|"]{.monospace} (adding the double back slashes tells R to **not** interpret [||]{.monospace} to mean the boolean operator OR).
-    Save the output into the variable `brauer2`, and then confirm that the operation worked by viewing the first few rows of the table.
+When dealing with larger datasets that have many columns, it is helpful if you can identify any columns that are extraneous and will not be used for analysis.
+This shrinks the overall size of the dataset so that it takes up less space in the computer's memory.
+For this dataset, the `GID`, `YORF`, and `GWEIGHT` columns aren't particularly important for any kind of analysis, so they can be removed.
 
-@.
-    Remove the whitespace from the five new columns you created using the function
+@.  Remove the `GID`, `YORF`, and `GWEIGHT` variables from the dataset and assign the result to the variable `brauer2`.
+
+## Enforcing one observation per row 
+
+Now we will employ a systematic approach while tidying this dataset by going through the rules one by one and determining what (if anything) needs to be reshaped. 
+We start with the first rule that "each variable must have its own column."
+The columns `G0.05` through `U0.3` each contain the results of different experimental trials, telling us which nutrient was restricted and what growth rate was selected for the yeast.
+Knowing this, we conclude that this dataset violates the first rule, as each row contains multiple experimental trials.
+
+@gather-nutrient-cols.  Use `gather()` to transpose the columns `G0.05` through `U0.3` into a series of rows to satisfy the rule that "each variable must have its own column.
+    Use the label `sample` for the new categorical variable created by `gather()` that contains the gathered column names and use the label `expression` for the new numerical variable containing the values originally under the `G0.05` through `U0.3` columns.
+    Assign your result to the variable `brauer3`.
+    
+After completing this step, the *one observation per row* rule will be satisfied.
+
+## Enforcing one column per variable and one value per cell
+
+The second and third rules are intertwined, and so fixing one will help to satisfy the other.
+Looking at the version of the dataset in `brauer3`, we can clearly see that the *one value per cell* rule is violated by the `NAME` and `sample` columns.
+These are violations that can be fixed using the `separate()` function.
+Let's separate the `sample` column we created with the `gather()` function first.
+
+::: {.callout .secondary}
+**Hint:** If you don't want the `separate()` function to delete any individual letters or symbols when splitting a column, you can set the `sep` argument equal to an integer, for example `sep = 1`.
+This tells `separate()` to split the column right after the first letter.
+:::
+
+@.  Separate the `sample` column that you created in **Exercise @gather-nutrient-cols** into two variables, `nutrient` and `rate`.
+    After separation, the data type for the `rate` column should be *double* (`<dbl>`), not *character*.
+    Assign your result to the variable `brauer4`.
+    
+Now we turn to the `NAME` column where each value is separated by two bars [||]{.monospace} and there are five variables contained in each cell.
+Using the information from the [about this week's dataset](#about-this-weeks-dataset) section, we deduce that we should name the new columns `gene_name`, `biological_process`, `molecular_function`, `systematic_id`, and `number`.
+
+::: {.callout .secondary}
+**Hint:** If you try to use `sep = "||"` in `separate()`, it will not work as expected.
+By default, the bar symbol [|]{.monospace} is interpreted as the boolean operator OR, which should be familiar from creating rules for `filter()`.
+To get around this, we can preceed [|]{.monospace} with backslashes to signal to R that we want it to read [|]{.monospace} as a symbol and not as the boolean operator OR.
+Thus, we should use `sep = "\\|\\|"` to define our separator.
+:::
+
+@.  Use `separate()` to split the values in the `NAME` column into five columns named `gene_name`, `biological_process`, `molecular_function`, `systematic_id`, and `number`.
+    Assign your result to the variable `brauer5`.
+
+We're nearly done!
+If you inspect the dataset with `View(brauer5)`, you'll notice that the text under some of the columns has quotation marks with unnecessary blank space.
+For example, `" molecular function unknown "`.
+Removing this blank space (typically called "white space") is called **trimming**, and we can use the `str_trim()` function for this purpose.
+    
+@.  Remove the whitespace from the five new columns you created using `mutate_at()` in combination with `str_trim()`:
 
     ```r
-    mutate_at(brauer2, vars(name:systematic_name), trimws)
+    brauer5 %>%
+      mutate_at(vars(gene_name:systematic_id), str_trim)
     ```
+    
+    Assign your result to the variable `brauer_tidy`.
 
-@.
-    The `GID`, `YORF`, and `GWEIGHT` columns aren't particularly important for any kind of analysis done with dataset.
-    Remove them from the dataset but leave all the others.
+Now we're done!
 
-    **Hint:** Use a function from [dpylr]{.monospace}.
-    Also, minus signs `-` can be used to specify columns to remove.
+## Visualizations using the tidy dataset
 
-@.
-    The columns `G0.05` through `U0.3` are actually categories for a variable column, so they shouldn't be used as column names.
-    Use the `gather()` function to move these variable names into a column.
-    The new column holding the variable names should be called "sample" and the new column holding the values underneath the `G0.05` through `U0.3` should be called "expression".
+Having a tidy dataset makes it easy to use the rest of the [tidyverse]{.monospace} packages, such as [ggplot2]{.monospace}.
+To demonstrate this, we will now create a plot that a biologist would use to explore gene expression trends that emerge due to restricting different nutrients and enforcing different growth rates.
 
-@.
-    The `sample` column we just created actually contains two variables, `nutrient` and `rate`.
-    Use the `separate()`function again to split it into those two columns.
-    Use `sep = 1` and `convert = TRUE` as additional arguments.
-
-@tidy-make-plot.
-    Take your tidy dataset and apply a `filter()` to only look at the rows with a name of `LEU1`.
-    Then, create a line plot using [ggplot2]{.monospace}.
-    The plot should have `rate` on the horizontal, `expression` on the vertical, and the separate `nutrients` plotted as different colors.
+@tidy-make-plot. Filter `brauer_tidy` so that it only contains entries with `gene_name` equal to `LEU1`.
+    Then, create a line plot where you place `rate` on the horizontal axis, `expression` on the vertical axis, and assign different colors to `nutrient`.
 
 ## Additional questions
 
 :::::{.additional-questions}
-*   What happened to the dataset after going through the tidying procedure?
-    What are its dimensions like (it's number of rows vs. columns) before and after tidying?
-    Do you find it easier to read the data in this format?
+*   What are the dataset's dimensions (the number of rows and columns) after completing the tidying procedure?
+    Do you find it easier to read the data in this format, or did you think the original format was easier to understand?
     Why or why not?
 
-*   How did tidying the data facilitate the use of [ggplot2]{.monospace} in Exercise @tidy-make-plot?
-    Would making the same plot be just as easy with the original version of the dataset?
-    Why or why not?
+*   In **Exercise @tidy-make-plot** we were able to easily create a line plot of `expression` as a function of `rate` for the different kinds of nutrients for one of the genes in the microarray.
+    What specifically did the tidying procedure do to make it simple for us to create this plot?
+    Could we still create the same plot with [ggplot2]{.monospace} using the untidy version of the dataset?
+    If so, try to write the [ggplot2]{.monospace} code for it.
+    If not, identify what it is about the untidy dataset that prevents you from creating the same plot.
 :::::
 
 ## How to submit
