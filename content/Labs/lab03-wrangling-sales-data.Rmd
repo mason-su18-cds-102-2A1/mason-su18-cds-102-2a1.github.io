@@ -126,11 +126,8 @@ The function `desc()` can be used to sort in descending order, and we can mix-an
 Let's now try an example that uses the `mutate()` function, which is a little more complex.
 `mutate()` lets us **transform** our dataset by applying the same operation to each row in the dataset and appending the results as a *new* column.
 This would allow you to create a new column in your dataset called `total_price` that contains the toal price of each order.
-To 
-Try running the following code:
 
-
-@.  To calculate the total price of an order, for each row we need to multiply the number of units sold by the unit price.
+@.  To calculate the total price of an order, we need to multiply the number of units sold by the unit price across each row.
     Do this by running the following `mutate()` command:
 
     ```r
