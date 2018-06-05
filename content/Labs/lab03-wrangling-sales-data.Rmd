@@ -184,7 +184,7 @@ Here we just consider rules that are simple comparisons, which involve the symbo
 So, for example, a comparison rule that would show us all items that cost more than 16 dollars per unit would be `unit_price > 16`.
 A comparison rule that would find all rows with the representative Susan would be `representative == "Susan"` (if you are testing for equality with a column of [chr]{.monospace} type, then you need to surround any words or values in the column with quotation marks `"like so"`. )
 
-@.  Give the two code examples a try by running the following two code blcos:
+@.  Give the `filter()` function a try by running the following two code blocks:
 
     ```r
     office_supplies %>%
@@ -197,7 +197,7 @@ A comparison rule that would find all rows with the representative Susan would b
     ```
 
     After running the above code, figure out how to write a single line of `filter()` code that shows us all the items sold by Susan that cost more than 16 dollars.
-    You should be able to do this based on what we've seen so far with the other [tidyverse]{.monospace} commands, 
+    You should be able to do this based on what we've seen so far with the other [tidyverse]{.monospace} commands 
 
 Using `filter()` is a lot like running an advanced search on a data base, and gives us a convenient way to quickly look up and inspect subsets of data.
 
