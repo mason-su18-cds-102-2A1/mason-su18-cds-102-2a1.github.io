@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CDS-102   Lab 4   Tidying your dataset</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Dr. Glasbrenner" />
+    <meta name="date" content="2018-06-05" />
+    <link rel="stylesheet" href="/theme/css/remark-default.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/remark-cds102.css" type="text/css" />
+    <link rel="stylesheet" href="/theme/css/remark-cds102-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: center, middle, title-slide
+
+.upper-right[
+&lt;img src="/theme/img/cds-102-2a1-logo.png" width="605px" /&gt;
+]
+
+.lower-right[
+&lt;img src="/theme/img/cc-by-sa.png" width="88px" /&gt;
+
+These slides are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+]
+
+# Lab 4 — Tidying your dataset
+.title-hline[
+## June 5, 2018
+]
+
+---
+
+# What is tidy data?
+
+
+
+.valign-slide[
+&lt;img src="/img/tidy_data_schematic.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+1. Each variable must have its own column.
+
+2. Each observation must have its own row.
+
+3. Each value must have its own cell.
+]
+
+---
+
+# Difference between "tidy" and "dirty"
+
+* **Tidying** a dataset means reshaping it by transposing the rows and columns until the format fulfills the "tidy data" rules
+
+--
+
+  * Having a tidy dataset makes it easier to use .monospace[ggplot2] and .monospace[dplyr] functions
+
+--
+
+* "Dirty" datasets need to be **cleaned**
+    
+--
+
+  * Fix misspellings
+
+  * Fix data entry errors
+
+  * Deal with irregularities in the raw data
+
+---
+
+# World Health Organization example
+
+```r
+who %&gt;%
+  head()
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; country &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; iso2 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; iso3 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; new_sp_m014 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; new_sp_m1524 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; new_sp_m2534 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; ... &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1980 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1981 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1982 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1983 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1984 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1985 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# `gather()`ing columns
+
+.font90[
+The `who` dataset contains 57 columns, starting with `new_sp_m014` and ending with `newrel_f65`, whose labels refer to a set of three categories, violating the first rule for tidy data.
+]
+
+--
+
+.code80[
+
+```r
+who1 &lt;- who %&gt;% 
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE)
+```
+]
+
+.font90[
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; country &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; iso2 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; iso3 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cases &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1997 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new_sp_m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1998 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new_sp_m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new_sp_m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 8 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new_sp_m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 52 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2001 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new_sp_m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 129 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2002 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new_sp_m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 90 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+# `gather()` syntax
+
+.valign-slide[
+```r
+dataset %&gt;%
+  gather(
+    ...,           #  Columns you want to gather into rows
+    key = "...",   #  Variable for storing names of gathered columns
+    value = "..."  #  Variable for values stored under gathered columns
+  )
+```
+]
+
+---
+
+# `separate()` columns
+
+.font90[
+The `key` column contains 3 values per cell, not one, so this is a case for using `separate()`.
+]
+
+--
+
+.code70[
+
+```r
+who2 &lt;- who1 %&gt;%
+  mutate(key = str_replace(key, "newrel", "new_rel")) %&gt;%
+  separate(
+    col = key,
+    into = combine("new", "type", "sexage"),
+    sep = "_"
+  )
+```
+]
+
+.font80[
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; country &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; iso2 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; iso3 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; new &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; type &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; sexage &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cases &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1997 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1998 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 8 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 52 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2001 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 129 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2002 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; new &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; m014 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 90 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+# `separate()` syntax
+
+.valign-slide[
+```r
+dataset %&gt;%
+  separate(
+    col = ...,            #  Name of column to separate
+    into = combine(...),  #  Names for columns formed after separation
+    sep = ...,            #  Specifies the separator symbols
+    convert = ...         #  If TRUE, tries to set data type for new
+  )                       #    columns
+```
+]
+
+---
+
+# For next lab
+
+.valign-slide[
+* The next lab will have you connecting to the Twitter API to fetch real-time data that we'll import into RStudio
+
+* To be able to connect to the API, you need a Twitter account in order to generate an authentication token
+
+* Please register for a Twitter account before the beginning of next lab so that we can start the token generation procedure at the beginning of class
+
+* If you don't want to associate your name and/or Mason email address with a Twitter account, it is okay if you register under an alias using a "throwaway" email address
+]
+    </textarea>
+<script src="/theme/js/vendor/remark/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "default",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
