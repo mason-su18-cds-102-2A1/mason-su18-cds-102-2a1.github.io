@@ -1,0 +1,898 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDS-102: Introduction to Computational and Data Sciences Lab</title>
+    <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/cds101.min.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/cds102.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/vendor/katex/katex.min.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/vendor/highlightjs/default.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/vendor/fontawesome/fa-svg-with-js.css">
+      <link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="CDS-102: Introduction to Computational and Data Sciences Lab Full Atom Feed" />
+</head>  <body>
+    <div class="header-grid-container">
+    </div>
+    <div class="content-grid-container">
+  <article class="static-page">
+<header class="static-page-header">
+  <h1 class="static-page-title">Tidying your&nbsp;dataset</h1>
+</header><div class="static-page-body">
+  <blockquote>
+<p>This week’s lab will introduce you to the concepts of tidy data and how you can reshape your dataset to take advantage of the <span class="monospace">tidyverse</span> tools. You will then be guided through the process of using these tools to reshape a real-world gene expression dataset that tested the effect of starvation and growth rate on baker’s yeast.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+</blockquote>
+<h2 id="tidy-data">Tidy&nbsp;data</h2>
+<p>The principles of <em>Tidy Data</em> are visually represented in the figure&nbsp;below:</p>
+<p><img src="https://mason-su18-cds-102-2a1.github.io/img/tidy_data_schematic.png" title="plot of chunk tidy-data-schematic" alt="plot of chunk tidy-data-schematic" width="80%" style="display: block; margin: auto;" /></p>
+<p>The three panels are an illustration of the following three&nbsp;rules,</p>
+<div class="additional-questions">
+<ul>
+<li><p>Each variable must have its own&nbsp;column.</p></li>
+<li><p>Each observation must have its own&nbsp;row.</p></li>
+<li>Each value must have its own&nbsp;cell.</li>
+</ul>
+</div>
+<p>It is worth emphasizing that there is a difference between a <strong>tidy</strong> dataset and a <strong>dirty</strong> dataset. “Tidying” a dataset means reshaping it by transposing the rows and columns until the format matches the criteria outlined in the above rules, which then allows us to more easily use the <span class="monospace">ggplot2</span> and <span class="monospace">dplyr</span> functions to analyze and visualize a dataset. Cleaning a “dirty” dataset means that you are fixing misspellings, data entry errors, and dealing with other irregularities in the raw&nbsp;data.</p>
+<h2 id="about-this-weeks-dataset">About this week’s&nbsp;dataset</h2>
+<p>The following quote, taken from a discussion about this paper<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, describes the meaning of this dataset pretty&nbsp;well:</p>
+<blockquote>
+<p>Through the process of gene regulation, a cell can control which genes are transcribed from <span class="caps">DNA</span> to <span class="caps">RNA</span> — what we call being “expressed”. (If a gene is never turned into <span class="caps">RNA</span>, it may as well not be there at all). This provides a sort of “cellular switchboard” that can activate some systems and deactivate others, which can speed up or slow down growth, switch what nutrients are transported into or out of the cell, and respond to other stimuli. A <a href="https://en.wikipedia.org/wiki/DNA_microarray">gene expression microarray</a> lets us measure how much of each gene is expressed in a particular condition. We can use this to figure out the function of a specific gene (based on when it turns on and off), or to get an overall picture of the cell’s&nbsp;activity.</p>
+<p><a href="http://www.molbiolcell.org/content/19/1/352.abstract">Brauer 2008</a> used microarrays to test the effect of starvation and growth rate on baker’s yeast <a href="https://en.wikipedia.org/wiki/Saccharomyces_cerevisiae">S. cerevisiae</a>, a popular model organism for studying molecular genomics because of its simplicity). Basically, if you give yeast plenty of nutrients (a rich media), except that you sharply restrict its supply of one nutrient, you can control the growth rate to whatever level you desire (we do this with a tool called a <a href="https://en.wikipedia.org/wiki/Chemostat">chemostat</a>). For example, you could limit the yeast’s supply of glucose (sugar, which the cell metabolizes to get energy and carbon), of leucine (an essential amino acid), or of ammonium (a source of&nbsp;nitrogen).</p>
+<p>“Starving” the yeast of these nutrients lets us find genes&nbsp;that:</p>
+<ul>
+<li><strong>Raise or lower their activity in response to growth rate</strong>. Growth-rate dependent expression patterns can tell us a lot about cell cycle control, and how the cell responds to&nbsp;stress.</li>
+<li><strong>Respond differently when different nutrients are being limited</strong>. These genes may be involved in the transport or metabolism of those&nbsp;nutrients.</li>
+</ul>
+</blockquote>
+<h3 id="variables">Variables</h3>
+<p>This is a tabular dataset with 5,537 rows and 40&nbsp;columns:</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="monospace"><span class="caps">GID</span></span></td>
+<td>One kind of <span class="caps">ID</span> for each gene</td>
+</tr>
+<tr class="even">
+<td><span class="monospace"><span class="caps">YORF</span></span></td>
+<td>Yeast Open Reading Frame (a kind of sub-unit of genetic information)</td>
+</tr>
+<tr class="odd">
+<td><span class="monospace"><span class="caps">NAME</span></span></td>
+<td>See below</td>
+</tr>
+<tr class="even">
+<td><span class="monospace"><span class="caps">GWEIGHT</span></span></td>
+<td>The paper doesn’t make this clear, but all entries are 1</td>
+</tr>
+<tr class="odd">
+<td><span class="monospace">[<span class="caps">GNP</span>][0.05 ≤ x ≤ 0.30]</span></td>
+<td>The letters <span class="monospace">G</span>, <span class="monospace">N</span>, and <span class="monospace">P</span> represent the restricted nutrient. The decimal value is the yeast growth rate.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>NAME</code> column contains the following information separated by the double bar <span class="monospace">||</span>&nbsp;symbols:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 74%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Gene name</td>
+<td>for example, <span class="caps">SFB2</span>. Not all genes have a name here.</td>
+</tr>
+<tr class="even">
+<td>Biological process</td>
+<td>for example, “proteolysis and peptidolysis”</td>
+</tr>
+<tr class="odd">
+<td>Molecular function</td>
+<td>for example, “metalloendopeptidase activity”</td>
+</tr>
+<tr class="even">
+<td>Systematic <span class="caps">ID</span></td>
+<td>for example, <span class="caps">YNL049C</span>. Every gene has one of these unique IDs.</td>
+</tr>
+<tr class="odd">
+<td>Unknown <span class="caps">ID</span> Number</td>
+<td>for example, 1082129. The paper doesn’t explain what these mean.</td>
+</tr>
+</tbody>
+</table>
+<div class="callout secondary">
+<p>Like in previous labs, it’s recommended that you take a first look at the dataset by viewing it by running <code>View(brauer)</code> in your <em>Console</em>&nbsp;window.</p>
+</div>
+<h2 id="the-tidyr-package">The <span class="monospace">tidyr</span>&nbsp;package</h2>
+<p>Reshaping the gene expression dataset will require us to use two functions found in the <span class="monospace">tidyr</span> package, <code>gather()</code> and <code>separate()</code>. Let’s review how each of these functions works with the extended example from Chapter 12.6 in the <a href="http://r4ds.had.co.nz/"><em>R for Data Science</em></a>&nbsp;textbook.</p>
+<p>Running the <code>library(tidyverse)</code> command at the top of our RMarkdown file loads many packages and example datasets for us, which includes a dataset from the World Health Organization that is stored in the variable <code>who</code>. The first few lines of the <code>who</code> dataset&nbsp;are:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+country
+</th>
+<th style="text-align:left;">
+iso2
+</th>
+<th style="text-align:left;">
+iso3
+</th>
+<th style="text-align:left;">
+year
+</th>
+<th style="text-align:left;">
+new_sp_m014
+</th>
+<th style="text-align:left;">
+new_sp_m1524
+</th>
+<th style="text-align:left;">
+new_sp_m2534
+</th>
+<th style="text-align:left;">
+new_sp_m3544
+</th>
+<th style="text-align:left;">
+new_sp_m4554
+</th>
+<th style="text-align:left;">
+…
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1980
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1981
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1982
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1983
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1984
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1985
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">NA</span>
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-gather-to-transpose-columns-into-rows">Using <code>gather()</code> to transpose columns into&nbsp;rows</h3>
+<p>In this data frame, the names of the 57 columns starting with <code>new_sp_m014</code> and ending with <code>newrel_f65</code> each refer to a set of three categories, violating the first rule for tidy data. This can easily be fixed by transposing these columns into rows using the <code>gather()</code> command:</p>
+<pre class="r"><code>who1 &lt;- who %&gt;% 
+  gather(new_sp_m014:newrel_f65, key = &quot;key&quot;, value = &quot;cases&quot;, na.rm = TRUE)</code></pre>
+<p>After applying the <code>gather()</code> operation, the first few rows in the dataset now look as&nbsp;follows:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+country
+</th>
+<th style="text-align:left;">
+iso2
+</th>
+<th style="text-align:left;">
+iso3
+</th>
+<th style="text-align:left;">
+year
+</th>
+<th style="text-align:left;">
+key
+</th>
+<th style="text-align:left;">
+cases
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1997
+</td>
+<td style="text-align:left;">
+new_sp_m014
+</td>
+<td style="text-align:left;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1998
+</td>
+<td style="text-align:left;">
+new_sp_m014
+</td>
+<td style="text-align:left;">
+30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1999
+</td>
+<td style="text-align:left;">
+new_sp_m014
+</td>
+<td style="text-align:left;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+2000
+</td>
+<td style="text-align:left;">
+new_sp_m014
+</td>
+<td style="text-align:left;">
+52
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+2001
+</td>
+<td style="text-align:left;">
+new_sp_m014
+</td>
+<td style="text-align:left;">
+129
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+2002
+</td>
+<td style="text-align:left;">
+new_sp_m014
+</td>
+<td style="text-align:left;">
+90
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+</tbody>
+</table>
+<p>As you can see, we’ve taken the 57 category columnms and converted them into categories underneath a single column named <code>key</code> with their corresponding values placed underneath the column <code>cases</code>.</p>
+<div class="callout primary">
+<p>To summarize, the syntax for <code>gather()</code> is as&nbsp;follows:</p>
+<pre class="r"><code>dataset %&gt;%
+  gather(
+    ...,           #  Columns you want to gather into rows
+    key = &quot;...&quot;,   #  Variable for storing names of gathered columns
+    value = &quot;...&quot;  #  Variable for values stored under gathered columns
+  )</code></pre>
+</div>
+<h3 id="using-separate-to-split-one-column-into-many">Using <code>separate()</code> to split one column into&nbsp;many</h3>
+<p>The other function you will need to use is <code>separate()</code>. This function takes values in a single column and splits them out into multiple columns. This is used when you have a dataset that doesn’t follow the third rule of tidy&nbsp;data.</p>
+<p>Going back to the <code>who</code> example, after you gathered the 57 columns into a single column, we might wonder what the values under <code>key</code> mean. If you run <code>?who</code>, you’ll see that the underscores <code>_</code> separate different variable values. This means that the <code>key</code> column contains 3 values per cell, not one, so this is a case for using <code>separate()</code>.</p>
+<p>To separate the columns, we run the&nbsp;following:</p>
+<pre class="r"><code>who2 &lt;- who1 %&gt;%
+  mutate(key = str_replace(key, &quot;newrel&quot;, &quot;new_rel&quot;)) %&gt;%
+  separate(
+    col = key,
+    into = combine(&quot;new&quot;, &quot;type&quot;, &quot;sexage&quot;),
+    sep = &quot;_&quot;
+  )</code></pre>
+<p>You can ignore the second line with a <code>mutate()</code> command for now, as this just fixes the missing underscore that you need to do before running&nbsp;separate.</p>
+<p>The first few lines of the separated dataset&nbsp;are:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+country
+</th>
+<th style="text-align:left;">
+iso2
+</th>
+<th style="text-align:left;">
+iso3
+</th>
+<th style="text-align:left;">
+year
+</th>
+<th style="text-align:left;">
+new
+</th>
+<th style="text-align:left;">
+type
+</th>
+<th style="text-align:left;">
+sexage
+</th>
+<th style="text-align:left;">
+cases
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1997
+</td>
+<td style="text-align:left;">
+new
+</td>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+m014
+</td>
+<td style="text-align:left;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1998
+</td>
+<td style="text-align:left;">
+new
+</td>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+m014
+</td>
+<td style="text-align:left;">
+30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+1999
+</td>
+<td style="text-align:left;">
+new
+</td>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+m014
+</td>
+<td style="text-align:left;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+2000
+</td>
+<td style="text-align:left;">
+new
+</td>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+m014
+</td>
+<td style="text-align:left;">
+52
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+2001
+</td>
+<td style="text-align:left;">
+new
+</td>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+m014
+</td>
+<td style="text-align:left;">
+129
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+<span class="caps">AF</span>
+</td>
+<td style="text-align:left;">
+<span class="caps">AFG</span>
+</td>
+<td style="text-align:left;">
+2002
+</td>
+<td style="text-align:left;">
+new
+</td>
+<td style="text-align:left;">
+sp
+</td>
+<td style="text-align:left;">
+m014
+</td>
+<td style="text-align:left;">
+90
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+<td style="text-align:left;">
+…
+</td>
+</tr>
+</tbody>
+</table>
+<p>As you can see, this has successfully split our one column into&nbsp;three.</p>
+<div class="callout primary">
+<p>To summarize, the syntax for <code>separate()</code> is as&nbsp;follows:</p>
+<pre class="r"><code>dataset %&gt;%
+  separate(
+    col = ...,            #  Name of column to separate
+    into = combine(...),  #  Names for new columns formed after separation
+    sep = ...,            #  Specifies the separator symbols
+    convert = ...         #  If TRUE, tries to set data type for new columns
+  )</code></pre>
+<p>Your should note that the <code>into</code> keyword needs to be specified as a vector of strings that you can create using <code>combine()</code>.</p>
+</div>
+<h2 id="prune-the-dataset">Prune the&nbsp;dataset</h2>
+<p>When dealing with larger datasets that have many columns, it is helpful if you can identify any columns that are extraneous and will not be used for analysis. This shrinks the overall size of the dataset so that it takes up less space in the computer’s memory. For this dataset, the <code>GID</code>, <code>YORF</code>, and <code>GWEIGHT</code> columns aren’t particularly important for any kind of analysis, so they can be&nbsp;removed.</p>
+<ol class="example" type="1">
+<li>Remove the <code>GID</code>, <code>YORF</code>, and <code>GWEIGHT</code> variables from the dataset and assign the result to the variable <code>brauer2</code>.</li>
+</ol>
+<h2 id="enforcing-one-observation-per-row">Enforcing one observation per&nbsp;row</h2>
+<p>Now we will employ a systematic approach while tidying this dataset by going through the rules one by one and determining what (if anything) needs to be reshaped. We start with the first rule that “each variable must have its own column.” The columns <code>G0.05</code> through <code>U0.3</code> each contain the results of different experimental trials, telling us which nutrient was restricted and what growth rate was selected for the yeast. Knowing this, we conclude that this dataset violates the first rule, as each row contains multiple experimental&nbsp;trials.</p>
+<ol start="2" class="example" type="1">
+<li>Use <code>gather()</code> to transpose the columns <code>G0.05</code> through <code>U0.3</code> into a series of rows to satisfy the rule that &#8220;each variable must have its own column. Use the label <code>sample</code> for the new categorical variable created by <code>gather()</code> that contains the gathered column names and use the label <code>expression</code> for the new numerical variable containing the values originally under the <code>G0.05</code> through <code>U0.3</code> columns. Assign your result to the variable <code>brauer3</code>.</li>
+</ol>
+<p>After completing this step, the <em>one observation per row</em> rule will be&nbsp;satisfied.</p>
+<h2 id="enforcing-one-column-per-variable-and-one-value-per-cell">Enforcing one column per variable and one value per&nbsp;cell</h2>
+<p>The second and third rules are intertwined, and so fixing one will help to satisfy the other. Looking at the version of the dataset in <code>brauer3</code>, we can clearly see that the <em>one value per cell</em> rule is violated by the <code>NAME</code> and <code>sample</code> columns. These are violations that can be fixed using the <code>separate()</code> function. Let’s separate the <code>sample</code> column we created with the <code>gather()</code> function&nbsp;first.</p>
+<div class="callout secondary">
+<p><strong>Hint:</strong> If you don’t want the <code>separate()</code> function to delete any individual letters or symbols when splitting a column, you can set the <code>sep</code> argument equal to an integer, for example <code>sep = 1</code>. This tells <code>separate()</code> to split the column right after the first&nbsp;letter.</p>
+</div>
+<ol start="3" class="example" type="1">
+<li>Separate the <code>sample</code> column that you created in <strong>Exercise 2</strong> into two variables, <code>nutrient</code> and <code>rate</code>. After separation, the data type for the <code>rate</code> column should be <em>double</em> (<code>&lt;dbl&gt;</code>), not <em>character</em>. Assign your result to the variable <code>brauer4</code>.</li>
+</ol>
+<p>Now we turn to the <code>NAME</code> column where each value is separated by two bars <span class="monospace">||</span> and there are five variables contained in each cell. Using the information from the <a href="#about-this-weeks-dataset">about this week’s dataset</a> section, we deduce that we should name the new columns <code>gene_name</code>, <code>biological_process</code>, <code>molecular_function</code>, <code>systematic_id</code>, and <code>number</code>.</p>
+<div class="callout secondary">
+<p><strong>Hint:</strong> If you try to use <code>sep = &quot;||&quot;</code> in <code>separate()</code>, it will not work as expected. By default, the bar symbol <span class="monospace">|</span> is interpreted as the boolean operator <span class="caps">OR</span>, which should be familiar from creating rules for <code>filter()</code>. To get around this, we can preceed <span class="monospace">|</span> with backslashes to signal to R that we want it to read <span class="monospace">|</span> as a symbol and not as the boolean operator <span class="caps">OR</span>. Thus, we should use <code>sep = &quot;\\|\\|&quot;</code> to define our&nbsp;separator.</p>
+</div>
+<ol start="4" class="example" type="1">
+<li>Use <code>separate()</code> to split the values in the <code>NAME</code> column into five columns named <code>gene_name</code>, <code>biological_process</code>, <code>molecular_function</code>, <code>systematic_id</code>, and <code>number</code>. Assign your result to the variable <code>brauer5</code>.</li>
+</ol>
+<p>We’re nearly done! If you inspect the dataset with <code>View(brauer5)</code>, you’ll notice that the text under some of the columns has quotation marks with unnecessary blank space. For example, <code>&quot; molecular function unknown &quot;</code>. Removing this blank space (typically called “white space”) is called <strong>trimming</strong>, and we can use the <code>str_trim()</code> function for this&nbsp;purpose.</p>
+<ol start="5" class="example" type="1">
+<li><p>Remove the whitespace from the five new columns you created using <code>mutate_at()</code> in combination with <code>str_trim()</code>:</p>
+<pre class="r"><code>brauer5 %&gt;%
+  mutate_at(vars(gene_name:systematic_id), str_trim)</code></pre>
+<p>Assign your result to the variable <code>brauer_tidy</code>.</p></li>
+</ol>
+<p>Now we’re&nbsp;done!</p>
+<h2 id="visualizations-using-the-tidy-dataset">Visualizations using the tidy&nbsp;dataset</h2>
+<p>Having a tidy dataset makes it easy to use the rest of the <span class="monospace">tidyverse</span> packages, such as <span class="monospace">ggplot2</span>. To demonstrate this, we will now create a plot that a biologist would use to explore gene expression trends that emerge due to restricting different nutrients and enforcing different growth&nbsp;rates.</p>
+<ol start="6" class="example" type="1">
+<li>Filter <code>brauer_tidy</code> so that it only contains entries with <code>gene_name</code> equal to <code>LEU1</code>. Then, create a line plot where you place <code>rate</code> on the horizontal axis, <code>expression</code> on the vertical axis, and assign different colors to <code>nutrient</code>.</li>
+</ol>
+<h2 id="additional-questions">Additional&nbsp;questions</h2>
+<div class="additional-questions">
+<ul>
+<li><p>What are the dataset’s dimensions (the number of rows and columns) after completing the tidying procedure? Do you find it easier to read the data in this format, or did you think the original format was easier to understand? Why or why&nbsp;not?</p></li>
+<li>In <strong>Exercise 6</strong> we were able to easily create a line plot of <code>expression</code> as a function of <code>rate</code> for the different kinds of nutrients for one of the genes in the microarray. What specifically did the tidying procedure do to make it simple for us to create this plot? Could we still create the same plot with <span class="monospace">ggplot2</span> using the untidy version of the dataset? If so, try to write the <span class="monospace">ggplot2</span> code for it. If not, identify what it is about the untidy dataset that prevents you from creating the same&nbsp;plot.</li>
+</ul>
+</div>
+<h2 id="how-to-submit">How to&nbsp;submit</h2>
+<p>When you are ready to submit, be sure to save, commit, and push your final result so that everything is synchronized to Github. Then, navigate to <strong>your copy</strong> of the Github repository you used for this assignment. You should see your repository, along with the updated files that you just synchronized to Github. Confirm that your files are up-to-date, and then do the following&nbsp;steps:</p>
+<div class="pull-request">
+<ul>
+<li><p>Click the <em>Pull Requests</em> tab near the top of the&nbsp;page.</p></li>
+<li><p>Click the green button that says “New pull&nbsp;request”.</p></li>
+<li><p>Click the dropdown menu button labeled “base:”, and select the option <code>starting</code>.</p></li>
+<li><p>Confirm that the dropdown menu button labeled “compare:” is set to <code>master</code>.</p></li>
+<li><p>Click the green button that says “Create pull&nbsp;request”.</p></li>
+<li><p>Give the <em>pull request</em> the following title: <span class="monospace">Submission: Lab 4, FirstName LastName</span>, replacing <span class="monospace">FirstName</span> and <span class="monospace">LastName</span> with your actual first and last&nbsp;name.</p></li>
+<li><p>In the messagebox, write: <span class="monospace">My lab report is ready for grading @jkglasbrenner</span>.</p></li>
+<li>Click “Create pull request” to lock in your&nbsp;submission.</li>
+</ul>
+</div>
+<h2 id="credits">Credits</h2>
+<p>This lab is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>. Exercises and instructions written by James Glasbrenner for <span class="caps">CDS</span>-102.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Brauer <em>et. al.</em>, “Coordination of growth rate, cell cycle, stress response, and metabolic activity in yeast”, Mol. Biol. Cell <strong>19</strong>, 352 (2008).<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Robinson, David, “Cleaning and Visualizing Genomic Data: A Case Study in Tidy Analysis,” <em>Variance Explained</em> (2015).<a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+
+</div>  </article>
+    </div>
+<footer class="page-footer">
+    <div class="footer-grid-container">
+      Except where otherwise noted, site materials are created by
+      <a href="https://cos.gmu.edu/cds/faculty-profile-james-glasbrenner/">
+        James K. Glasbrenner
+      </a>
+      and licensed under a
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+        Creative Commons Attribution-ShareAlike 4.0 International License
+      </a>.
+    </div>
+</footer><script src="https://mason-su18-cds-102-2a1.github.io/theme/js/cds101.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/highlightjs/highlight.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/katex/katex.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/wookmark/wookmark.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/fontawesome/fontawesome-all.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/vendorInit.js"></script>
+  </body>
+</html>
