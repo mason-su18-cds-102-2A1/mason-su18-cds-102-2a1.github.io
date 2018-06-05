@@ -970,12 +970,12 @@ m014
 &lt;/ul&gt;
 &lt;p&gt;So, for example, a comparison rule that would show us all items that cost more than 16 dollars per unit would be &lt;code&gt;unit_price &amp;gt; 16&lt;/code&gt;. A comparison rule that would find all rows with the representative Susan would be &lt;code&gt;representative == &amp;quot;Susan&amp;quot;&lt;/code&gt; (if you are testing for equality with a column of &lt;span class="monospace"&gt;chr&lt;/span&gt; type, then you need to surround any words or values in the column with quotation marks &lt;code&gt;&amp;quot;like so&amp;quot;&lt;/code&gt;.&amp;nbsp;)&lt;/p&gt;
 &lt;ol start="8" class="example" type="1"&gt;
-&lt;li&gt;&lt;p&gt;Give the two code examples a try by running the following two code&amp;nbsp;blcos:&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;Give the &lt;code&gt;filter()&lt;/code&gt; function a try by running the following two code&amp;nbsp;blocks:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
   filter(unit_price &amp;gt; 16)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r"&gt;&lt;code&gt;office_supplies %&amp;gt;%
   filter(representative == &amp;quot;Susan&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;After running the above code, figure out how to write a single line of &lt;code&gt;filter()&lt;/code&gt; code that shows us all the items sold by Susan that cost more than 16 dollars. You should be able to do this based on what we’ve seen so far with the other &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;&amp;nbsp;commands,&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;After running the above code, figure out how to write a single line of &lt;code&gt;filter()&lt;/code&gt; code that shows us all the items sold by Susan that cost more than 16 dollars. You should be able to do this based on what we’ve seen so far with the other &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;&amp;nbsp;commands&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Using &lt;code&gt;filter()&lt;/code&gt; is a lot like running an advanced search on a data base, and gives us a convenient way to quickly look up and inspect subsets of&amp;nbsp;data.&lt;/p&gt;
 &lt;ol start="9" class="example" type="1"&gt;

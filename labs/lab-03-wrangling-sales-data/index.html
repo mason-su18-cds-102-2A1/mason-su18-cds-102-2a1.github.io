@@ -136,12 +136,12 @@
 </ul>
 <p>So, for example, a comparison rule that would show us all items that cost more than 16 dollars per unit would be <code>unit_price &gt; 16</code>. A comparison rule that would find all rows with the representative Susan would be <code>representative == &quot;Susan&quot;</code> (if you are testing for equality with a column of <span class="monospace">chr</span> type, then you need to surround any words or values in the column with quotation marks <code>&quot;like so&quot;</code>.&nbsp;)</p>
 <ol start="8" class="example" type="1">
-<li><p>Give the two code examples a try by running the following two code&nbsp;blcos:</p>
+<li><p>Give the <code>filter()</code> function a try by running the following two code&nbsp;blocks:</p>
 <pre class="r"><code>office_supplies %&gt;%
   filter(unit_price &gt; 16)</code></pre>
 <pre class="r"><code>office_supplies %&gt;%
   filter(representative == &quot;Susan&quot;)</code></pre>
-<p>After running the above code, figure out how to write a single line of <code>filter()</code> code that shows us all the items sold by Susan that cost more than 16 dollars. You should be able to do this based on what we’ve seen so far with the other <span class="monospace">tidyverse</span>&nbsp;commands,</p></li>
+<p>After running the above code, figure out how to write a single line of <code>filter()</code> code that shows us all the items sold by Susan that cost more than 16 dollars. You should be able to do this based on what we’ve seen so far with the other <span class="monospace">tidyverse</span>&nbsp;commands</p></li>
 </ol>
 <p>Using <code>filter()</code> is a lot like running an advanced search on a data base, and gives us a convenient way to quickly look up and inspect subsets of&nbsp;data.</p>
 <ol start="9" class="example" type="1">
