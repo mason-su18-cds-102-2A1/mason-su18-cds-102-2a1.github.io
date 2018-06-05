@@ -103,9 +103,9 @@
 <p>Copy the starting code from the previous example, and adapt it so that <code>region</code> is sorted in <em>ascending</em> order and <code>item</code> is sorted in <em>descending</em> order. Write it down and get the&nbsp;output.</p></li>
 </ol>
 <h2 id="transforming-data">Transforming&nbsp;data</h2>
-<p>Let’s now try an example that uses the <code>mutate()</code> function, which is a little more complex. <code>mutate()</code> lets us <strong>transform</strong> our dataset by applying the same operation to each row in the dataset and appending the results as a <em>new</em> column. This would allow you to create a new column in your dataset called <code>total_price</code> that contains the toal price of each order. To Try running the following&nbsp;code:</p>
+<p>Let’s now try an example that uses the <code>mutate()</code> function, which is a little more complex. <code>mutate()</code> lets us <strong>transform</strong> our dataset by applying the same operation to each row in the dataset and appending the results as a <em>new</em> column. This would allow you to create a new column in your dataset called <code>total_price</code> that contains the toal price of each&nbsp;order.</p>
 <ol start="5" class="example" type="1">
-<li><p>To calculate the total price of an order, for each row we need to multiply the number of units sold by the unit price. Do this by running the following <code>mutate()</code> command:</p>
+<li><p>To calculate the total price of an order, we need to multiply the number of units sold by the unit price across each row. Do this by running the following <code>mutate()</code> command:</p>
 <pre class="r"><code>office_supplies %&gt;%
   mutate(total_price = units * unit_price)</code></pre>
 <p>After confirming that the above command works, copy this code into a new code block and remove <code>total_price =</code> from the function input. Does the code still run? If so, what (if anything) is different in the output? What if you ran <code>mutate(final_price = units * unit_price)</code>?</p>
