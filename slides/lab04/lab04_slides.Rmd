@@ -30,7 +30,7 @@ knitr::include_graphics("img/cc-by-sa.png")
 These slides are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
 ]
 
-# Lab 4 — Tidying our dataset
+# Lab 4 — Tidying your dataset
 .title-hline[
 ## June 5, 2018
 ]
@@ -52,6 +52,7 @@ options(htmltools.dir.version = FALSE)
 suppressPackageStartupMessages(library(tidyverse, quietly = TRUE))
 ```
 
+.valign-slide[
 ```{r tidy-data-schematic, echo = FALSE}
 knitr::include_graphics("img/tidy_data_schematic.png")
 ```
@@ -61,6 +62,7 @@ knitr::include_graphics("img/tidy_data_schematic.png")
 2. Each observation must have its own row.
 
 3. Each value must have its own cell.
+]
 
 ---
 
@@ -106,16 +108,20 @@ who %>%
 
 # `gather()`ing columns
 
+.font90[
 The `who` dataset contains 57 columns, starting with `new_sp_m014` and ending with `newrel_f65`, whose labels refer to a set of three categories, violating the first rule for tidy data.
+]
 
 --
 
+.code80[
 ```{r who-gather-step}
 who1 <- who %>% 
   gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE)
 ```
+]
 
-.font80[
+.font90[
 ```{r who-gather-step-table, echo = FALSE}
 who %>% 
   gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE) %>%
@@ -144,10 +150,13 @@ dataset %>%
 
 # `separate()` columns
 
+.font90[
 The `key` column contains 3 values per cell, not one, so this is a case for using `separate()`.
+]
 
 --
 
+.code70[
 ```{r who-separate-step}
 who2 <- who1 %>%
   mutate(key = str_replace(key, "newrel", "new_rel")) %>%
@@ -157,6 +166,7 @@ who2 <- who1 %>%
     sep = "_"
   )
 ```
+]
 
 .font80[
 ```{r who-separate-step-table, echo = FALSE}
@@ -176,9 +186,9 @@ who2%>%
 dataset %>%
   separate(
     col = ...,            #  Name of column to separate
-    into = combine(...),  #  Names for new columns formed after separation
+    into = combine(...),  #  Names for columns formed after separation
     sep = ...,            #  Specifies the separator symbols
-    convert = ...         #  If TRUE, tries to set data type for new columns
-  )
+    convert = ...         #  If TRUE, tries to set data type for new
+  )                       #    columns
 ```
 ]
