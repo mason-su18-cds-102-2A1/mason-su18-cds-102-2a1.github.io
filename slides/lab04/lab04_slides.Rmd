@@ -192,3 +192,17 @@ dataset %>%
   )                       #    columns
 ```
 ]
+
+---
+
+# For next lab
+
+.valign-slide[
+* The next lab will have you connecting to the Twitter API to fetch real-time data that we'll import into RStudio
+
+* To be able to connect to the API, you need a Twitter account in order to generate an authentication token
+
+* Please register for a Twitter account before the beginning of next lab so that we can start the token generation procedure at the beginning of class
+
+* If you don't want to associate your name and/or Mason email address with a Twitter account, it is okay if you register under an alias using a "throwaway" email address
+]
