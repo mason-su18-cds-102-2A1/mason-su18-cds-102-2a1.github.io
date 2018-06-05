@@ -1,0 +1,184 @@
+---
+title: "CDS-102 <br> Lab 4 <br> Tidying your dataset"
+author: Dr. Glasbrenner
+date: June 5, 2018
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [libs/css/remark-default.css, libs/css/remark-cds102.css, libs/css/remark-cds102-fonts.css]
+    seal: false
+    chakra: libs/js/vendor/remark/remark-latest.min.js
+    nature:
+      highlightStyle: default
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+class: center, middle, title-slide
+
+.upper-right[
+```{r logo, eval = TRUE, echo = FALSE, out.width = "605px"}
+knitr::include_graphics("img/cds-102-2a1-logo.png")
+```
+]
+
+.lower-right[
+```{r cc-by-sa, eval = TRUE, echo = FALSE, out.width = "88px"}
+knitr::include_graphics("img/cc-by-sa.png")
+```
+
+These slides are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+]
+
+# Lab 4 — Tidying our dataset
+.title-hline[
+## June 5, 2018
+]
+
+---
+
+# What is tidy data?
+
+```{r setup, include = FALSE, eval = TRUE, echo = FALSE}
+# DO NOT ALTER THIS CHUNK
+knitr::opts_chunk$set(
+  echo = TRUE, eval = TRUE, fig.width = 5, warning = FALSE,
+  message = FALSE, dev = "svg",
+  fig.asp = 0.618, out.width = "80%", dpi = 120,
+  fig.align = "center", cache = FALSE
+)
+options(htmltools.dir.version = FALSE)
+# Load required packages
+suppressPackageStartupMessages(library(tidyverse, quietly = TRUE))
+```
+
+```{r tidy-data-schematic, echo = FALSE}
+knitr::include_graphics("img/tidy_data_schematic.png")
+```
+
+1. Each variable must have its own column.
+
+2. Each observation must have its own row.
+
+3. Each value must have its own cell.
+
+---
+
+# Difference between "tidy" and "dirty"
+
+* **Tidying** a dataset means reshaping it by transposing the rows and columns until the format fulfills the "tidy data" rules
+
+--
+
+  * Having a tidy dataset makes it easier to use .monospace[ggplot2] and .monospace[dplyr] functions
+
+--
+
+* "Dirty" datasets need to be **cleaned**
+    
+--
+
+  * Fix misspellings
+
+  * Fix data entry errors
+
+  * Deal with irregularities in the raw data
+
+---
+
+# World Health Organization example
+
+```r
+who %>%
+  head()
+```
+
+```{r who-example-head, echo = FALSE}
+who %>%
+  head() %>%
+  select(country:new_sp_m2534) %>%
+  cbind(data_frame(`...` = rep("...", 6))) %>%
+  rbind(rep("...", 7)) %>%
+  knitr::kable(format = "html")
+```
+
+---
+
+# `gather()`ing columns
+
+The `who` dataset contains 57 columns, starting with `new_sp_m014` and ending with `newrel_f65`, whose labels refer to a set of three categories, violating the first rule for tidy data.
+
+--
+
+```{r who-gather-step}
+who1 <- who %>% 
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE)
+```
+
+.font80[
+```{r who-gather-step-table, echo = FALSE}
+who %>% 
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE) %>%
+  head() %>%
+  rbind(rep("...", 6)) %>%
+  knitr::kable(format = "html")
+```
+]
+
+---
+
+# `gather()` syntax
+
+.valign-slide[
+```r
+dataset %>%
+  gather(
+    ...,           #  Columns you want to gather into rows
+    key = "...",   #  Variable for storing names of gathered columns
+    value = "..."  #  Variable for values stored under gathered columns
+  )
+```
+]
+
+---
+
+# `separate()` columns
+
+The `key` column contains 3 values per cell, not one, so this is a case for using `separate()`.
+
+--
+
+```{r who-separate-step}
+who2 <- who1 %>%
+  mutate(key = str_replace(key, "newrel", "new_rel")) %>%
+  separate(
+    col = key,
+    into = combine("new", "type", "sexage"),
+    sep = "_"
+  )
+```
+
+.font80[
+```{r who-separate-step-table, echo = FALSE}
+who2%>% 
+  head() %>%
+  rbind(rep("...", 8)) %>%
+  knitr::kable(format = "html")
+```
+]
+
+---
+
+# `separate()` syntax
+
+.valign-slide[
+```r
+dataset %>%
+  separate(
+    col = ...,            #  Name of column to separate
+    into = combine(...),  #  Names for new columns formed after separation
+    sep = ...,            #  Specifies the separator symbols
+    convert = ...         #  If TRUE, tries to set data type for new columns
+  )
+```
+]
