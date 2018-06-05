@@ -1,7 +1,8 @@
 include make.inc
 
 DIRS	=	lab01															\
-			lab02
+			lab02															\
+			lab04
 .SILENT :
 .PHONY : clean all $(DIRS)
 
