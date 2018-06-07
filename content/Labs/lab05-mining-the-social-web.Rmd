@@ -174,7 +174,7 @@ To ask the Twitter API for the account information belonging to the Computationa
 
 ```r
 lookup_users("CSS_GMU") %>%
-  write_rds(path = "user_css_gmu", ext = "rds"))
+  write_rds(path = path("user_css_gmu", ext = "rds"))
 ```
 
 This will write a file named [user_css_gmu.rds]{.monospace} into your project directory that contains the information we just collected.
