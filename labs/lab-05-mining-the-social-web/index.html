@@ -1,0 +1,247 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDS-102: Introduction to Computational and Data Sciences Lab</title>
+    <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/cds101.min.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/cds102.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/vendor/katex/katex.min.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/vendor/highlightjs/default.css">
+      <link rel="stylesheet" href="https://mason-su18-cds-102-2a1.github.io/theme/css/vendor/fontawesome/fa-svg-with-js.css">
+      <link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="CDS-102: Introduction to Computational and Data Sciences Lab Full Atom Feed" />
+</head>  <body>
+    <div class="header-grid-container">
+    </div>
+    <div class="content-grid-container">
+  <article class="static-page">
+<header class="static-page-header">
+  <h1 class="static-page-title">Mining the social&nbsp;web</h1>
+</header><div class="static-page-body">
+  <blockquote>
+<p>This week’s lab shows you how to access the Twitter <span class="caps">API</span> using the <span class="monospace">rtweet</span> package and what you can do with that harvested&nbsp;data.</p>
+</blockquote>
+<h2 id="installing-dependencies">Installing&nbsp;dependencies</h2>
+<p>This lab requires you to install a few extra packages into your RStudio environment, so let’s take care of that first. First, we need to check if we need to install the <a href="https://github.com/r-lib/devtools"><span class="monospace">devtools</span></a> package, and install it if we don’t have&nbsp;it:</p>
+<pre class="r"><code>if (!requireNamespace(&quot;devtools&quot;, quietly = TRUE)) {
+  install.packages(&quot;devtools&quot;)
+}</code></pre>
+<p>Once <a href="https://github.com/r-lib/devtools"><span class="monospace">devtools</span></a> is installed, run the following code to install the latest versions of the <a href="https://github.com/r-lib/fs"><span class="monospace">fs</span></a> and <a href="https://github.com/mkearney/rtweet"><span class="monospace">rtweet</span></a>&nbsp;packages:</p>
+<pre class="r"><code>devtools::install_github(&quot;r-lib/fs&quot;)
+devtools::install_github(&quot;mkearney/rtweet&quot;)</code></pre>
+<p>We also run the following code in our <em>Console</em> window in order to create an <span class="monospace">.Renviron</span> file and path to the <span class="monospace">Twitter authentication token</span> in your RStudio Server account’s user directory and then open the file in RStudio for editing later&nbsp;on.</p>
+<pre class="r"><code>location_to_save_token &lt;- path(path_home(), &quot;.config&quot;, &quot;R&quot;, &quot;twitter&quot;)
+token_file &lt;- path(location_to_save_token, &quot;twitter_token&quot;, ext=&quot;rds&quot;)
+dir_create(path = location_to_save_token, recursive = TRUE)
+
+renviron_file &lt;- path(path_home(), &quot;.Renviron&quot;)
+file_create(path = renviron_file)
+file_chmod(path = renviron_file, mode = &quot;600&quot;)
+
+if (!str_detect(read_file(file = renviron_file), &quot;TWITTER_APP=&quot;)) {
+  write_file(
+    x = glue(
+      &quot;TWITTER_APP=rtweet-token\n&quot;,
+      &quot;TWITTER_CONSUMER_KEY=\n&quot;,
+      &quot;TWITTER_CONSUMER_SECRET=\n&quot;,
+      &quot;TWITTER_ACCESS_TOKEN=\n&quot;,
+      &quot;TWITTER_ACCESS_TOKEN_SECRET=\n&quot;
+    ),
+    path = path(path_home(), &quot;.Renviron&quot;),
+    append = TRUE
+  )
+}
+
+if (!str_detect(read_file(file = renviron_file), &quot;TWITTER_PAT=&quot;)) {
+  write_file(
+    x = glue(&quot;TWITTER_PAT={token_file}\n\n&quot;),
+    path = path(path_home(), &quot;.Renviron&quot;),
+    append = TRUE
+  )
+}
+
+file.edit(renviron_file)</code></pre>
+<p>Next, we turn to getting ourselves set up to access the Twitter <span class="caps">API</span>.</p>
+<h2 id="creating-an-app-on-the-twitter-api">Creating an App on the Twitter <span class="caps">API</span></h2>
+<p>The official method for accessing Twitter data is through their <span class="caps">API</span> (<strong>application programming interface</strong>), which is only available if you have an <em>authentication token</em>. The procedure for obtaining an authentication token is straightforward, you just need to have a registered Twitter account. If you have not already, <a href="https://twitter.com">create your Twitter account now</a> and log into your&nbsp;account.</p>
+<div class="callout primary">
+<p><strong>Phone verification:</strong> The Twitter apps page may require that you have a valid cell phone number associated with your Twitter account that is also <strong>verified</strong>. To double check whether you’ve associated a phone number with your Twitter account and validated it, navigate to <a href="https://twitter.com" class="uri">https://twitter.com</a> and click on your profile picture in the top right hand corner, click <code>Settings and privacy</code>, and then click <code>Mobile</code> on the menubar on the left. On this page you can enter your cell phone number and then verify it by entering the code you receive in a text message from&nbsp;Twitter.</p>
+</div>
+<p>The way we will get an authentication token for the Twitter <span class="caps">API</span> is by creating a Twitter app. Navigate to <a href="https://apps.twitter.com" class="uri">https://apps.twitter.com</a> and click <span class="monospace">Create New App</span>. This will open a page where you will create a new app by providing a Name, Description, and Website of your choosing, similar to the screenshot&nbsp;below:</p>
+<p><img src="https://mason-su18-cds-102-2a1.github.io/img/twitter_app_rtweet_token.png" title="plot of chunk creating-twitter-app-token" alt="plot of chunk creating-twitter-app-token" width="80%" style="display: block; margin: auto;" /></p>
+<p>If you need help choosing the Name, Description, and Website (which aren’t important in this case), just use the&nbsp;following:</p>
+<ul>
+<li><p><strong>Name:</strong> <span class="monospace">rtweet_tokens</span></p></li>
+<li><p><strong>Description:</strong> <span class="caps">CDS</span> 102&nbsp;lab</p></li>
+<li><p><strong>Website:</strong> <a href="http://summer18.cds101.com" class="uri">http://summer18.cds101.com</a></p></li>
+</ul>
+<p>It’s recommended by the <a href="https://github.com/mkearney/rtweet"><span class="monospace">rtweet</span></a> developers to set the <strong>Callback <span class="caps">URL</span></strong> to <code>http://127.0.0.1:1410</code>. Finally, check the <code>Developer Agreement</code> box and then click on <code>Create your Twitter Application</code> button.</p>
+<p><img src="https://mason-su18-cds-102-2a1.github.io/img/twitter_app_rtweet_created.png" title="plot of chunk twitter-app-token-created" alt="plot of chunk twitter-app-token-created" width="80%" style="display: block; margin: auto;" /></p>
+<p>After creating the app, click the tab labeled <span class="monospace">Keys and Access Tokens</span> to retrieve your consumer (api) and secret keys. The top of the page will look like&nbsp;this:</p>
+<p><img src="https://mason-su18-cds-102-2a1.github.io/img/twitter_app_token_keys.png" title="plot of chunk twitter-app-token-keys" alt="plot of chunk twitter-app-token-keys" width="80%" style="display: block; margin: auto;" /></p>
+<p>You will now need to copy and paste the codes for the <span class="monospace">Consumer Key</span>, <span class="monospace">Consumer Secret</span>, <span class="monospace">Access Token</span>, and <span class="monospace">Access Token Secret</span> into the <span class="monospace">.Renviron</span> file that we opened at the very end of the previous section. Copy each of these codes, match it to one of the four keywords in the <span class="monospace">.Renviron</span> file, and paste your copied code in the space immediately to the right of the equals <code>=</code> sign. Then, in the RStudio menubar, click <span class="monospace">Session</span>, then click <span class="monospace">Restart&nbsp;R</span></p>
+<h2 id="connecting-your-r-session-to-twitter">Connecting your R session to&nbsp;Twitter</h2>
+<p>Now that we have the authentication token codes saved to our account, let’s connect R and <span class="monospace">rtweet</span> using the following&nbsp;code:</p>
+<pre class="r"><code>twitter_token &lt;- create_token(
+  app = Sys.getenv(&quot;TWITTER_APP&quot;),
+  consumer_key = Sys.getenv(&quot;TWITTER_CONSUMER_KEY&quot;),
+  consumer_secret = Sys.getenv(&quot;TWITTER_CONSUMER_SECRET&quot;),
+  access_token = Sys.getenv(&quot;TWITTER_ACCESS_TOKEN&quot;),
+  access_secret = Sys.getenv(&quot;TWITTER_ACCESS_TOKEN_SECRET&quot;),
+  set_renv = FALSE 
+)</code></pre>
+<p>Running the above command will complete the connection process and now you can start using the Twitter <span class="caps">API</span>! Before we start, let’s perform one last configuration that will make it so that you do not need to re-run the above code each time you close and re-open&nbsp;RStudio:</p>
+<pre class="r"><code>location_to_save_token &lt;- path(path_home(), &quot;.config&quot;, &quot;R&quot;, &quot;twitter&quot;)
+token_file &lt;- path(location_to_save_token, &quot;twitter_token&quot;, ext=&quot;rds&quot;)
+dir_create(path = location_to_save_token, recursive = TRUE)
+write_rds(x = twitter_token, path = token_file)
+file_chmod(path = token_file, mode = &quot;600&quot;)</code></pre>
+<p>This code saves the configuration information about your Twitter authentication tokens and should be automatically loaded for you the next time you restart&nbsp;RStudio.</p>
+<div class="callout primary">
+<p><strong>Keep your access token codes private:</strong> It may seem like it would be more convenient to just store the consumer key, consumer secret, access token, and access token secret directly inside your RMarkdown file. Do not do this! These codes will give <em>anyone</em> that has them direct access to and control over your account. Therefore you should store the token codes somewhere safe in your RStudio Server account, which the above instructions helped you&nbsp;accomplish.</p>
+</div>
+<h2 id="fetching-data-about-users-their-followers-and-friends">Fetching data about users, their followers, and&nbsp;friends</h2>
+<p>There are many things we can analyze using a social media platform. Like most things, we will start small by stepping through a basic analysis of a single Twitter account. Our example account will be <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>, which is the official Twitter account of the Computational Social Science program in George Mason’s Computational <span class="amp">&amp;</span> Data Sciences&nbsp;Department.</p>
+<p>We begin by fetching the basic account information for <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>, which we will then save to disk for offline access, and then explore the variables returned to us. To ask the Twitter <span class="caps">API</span> for the account information belonging to the Computational Social Science program, we&nbsp;use:</p>
+<pre class="r"><code>lookup_users(&quot;CSS_GMU&quot;) %&gt;%
+  write_rds(path = &quot;user_css_gmu&quot;, ext = &quot;rds&quot;))</code></pre>
+<p>This will write a file named <span class="monospace">user_css_gmu.rds</span> into your project directory that contains the information we just collected. To read it into R’s memory, we&nbsp;run:</p>
+<pre class="r"><code>user_css_gmu &lt;- read_rds(&quot;user_css_gmu.rds&quot;)</code></pre>
+<p>Now let’s take a look at the information we just gathered about <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>. Perhaps we can learn something about the account just by looking at the different variables. Run the following to get a full list of the variables you can look at that are related to the&nbsp;account:</p>
+<pre class="r"><code>user_css_gmu %&gt;%
+  users_data() %&gt;%
+  names()</code></pre>
+<ol class="example" type="1">
+<li><p>Let’s focus on the following variables associated with the <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>&nbsp;account:</p>
+<pre class="r"><code>user_css_gmu %&gt;%
+  users_data() %&gt;%
+  select(
+    account_created_at,
+    description,
+    favourites_count,
+    followers_count,
+    friends_count,
+    account_lang
+  ) %&gt;%
+  glimpse(width = 200)</code></pre>
+<p>What do these variables describe and why might they be interesting to know? What other variables do you see after running the <code>names()</code> function that would be of interest to a data&nbsp;scientist?</p></li>
+</ol>
+<p>On social media platforms such as Twitter, we can learn a lot about an individual user by looking at the people that user follows (we’ll call these <em>friends</em>) as well as the people that follow the user (we’ll call these <em>followers</em>), and by studying the attributes and behaviors that emerge when these users interact with one another. Thus, while knowing an account’s personal attributes can be very useful, we can infer additional information about a user by analyzing the account’s friends and followers. Let’s see how this works in&nbsp;practice.</p>
+<ol start="2" class="example" type="1">
+<li><p>We need to fetch the friends and followers of the <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a> account using the <code>get_followers()</code> and <code>get_friends()</code> functions from <span class="monospace">rtweet</span> as&nbsp;follows:</p>
+<pre class="r"><code>get_followers(&quot;CSS_GMU&quot;) %&gt;%
+  pull(user_id) %&gt;%
+  lookup_users() %&gt;%
+  write_rds(path = path(&quot;css_gmu_followers&quot;, ext = &quot;rds&quot;))
+
+get_friends(&quot;CSS_GMU&quot;) %&gt;%
+  pull(user_id) %&gt;%
+  lookup_users() %&gt;%
+  write_rds(path = path(&quot;css_gmu_friends&quot;, ext = &quot;rds&quot;))</code></pre>
+<p>Like before, we’ve saved the data we collected to disk so that we have an offline&nbsp;copy.</p>
+<p>Do you understand what the above code is actually doing? Figure out what <code>get_followers()</code> and <code>get_friends()</code> are doing specifically, and what the <code>lookup_users()</code> function is doing in the above code, and explain it. Then, write the code that you need to read the <span class="monospace">rds</span> files into R so that you can work with the data. Assign the followers data to the variable <code>css_gmu_followers</code> and the friends data to the variable <code>css_gmu_friends</code>.</p></li>
+</ol>
+<h2 id="visualizing-twitter-data">Visualizing Twitter&nbsp;data</h2>
+<p>One of the conveniences of the <span class="monospace">rtweet</span> package is that it stores Twitter data in the <span class="monospace">tibble</span> data frame format, so all of the <span class="monospace">tidyverse</span> tools we’ve learned to use so far can be used for analysis. Let’s work through a few examples of what you can do to analyze this&nbsp;data.</p>
+<p>One of the questions we can ask of our data is if there is a relationship between how often <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>’s followers tweet and the number of followers they have. While we’re at it, we can also ask: what language do they write their tweets&nbsp;in?</p>
+<ol start="3" class="example" type="1">
+<li><p>Use the following command to get an answer to these&nbsp;questions:</p>
+<pre class="r"><code>css_gmu_followers %&gt;%
+  users_data() %&gt;%
+  ggplot() +
+  geom_point(
+    mapping = aes(
+      x = statuses_count,
+      y = followers_count,
+      color = account_lang
+    )
+  ) +
+  scale_x_log10() +
+  scale_y_log10() +
+  coord_equal()</code></pre>
+<p>Notice that we have set our plot to have a log-scale on both axes. Why would we want to do that? Also, what does this graph tell us about the accounts that follow <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>, and by consequence, what does all this say about <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>?</p></li>
+</ol>
+<p>The ages of the accounts for <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>’s friends and followers could contain meaningful patterns and be of interest to us. For example, it may be that the patterns in the account ages for <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a> look different from accounts not associated with a&nbsp;University.</p>
+<ol start="4" class="example" type="1">
+<li><p>Use the following command to create a visualization that looks at the account creation date for followers of <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>:</p>
+<pre class="r"><code>css_gmu_followers %&gt;%
+  users_data() %&gt;%
+  ggplot() +
+  geom_histogram(
+    mapping = aes(x = account_created_at),
+    bins = 20
+  )</code></pre>
+<p>Describe the distribution of ages of the accounts that follow <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>, and what can we infer about the account <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>&nbsp;itself?</p></li>
+</ol>
+<p>Of course, it wouldn’t make sense for us to interact with the Twitter <span class="caps">API</span> if we don’t grab some actual tweets! To request tweets for a specific account, we use the <code>get_timeline()</code> function. For example, to request all the tweets by the <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a> account we use the following&nbsp;command:</p>
+<pre class="r"><code>get_timeline(user = &quot;CSS_GMU&quot;, n = 500) %&gt;%
+  write_rds(path = path(&quot;css_gmu_all_tweets&quot;, ext = &quot;rds&quot;))</code></pre>
+<p>As usual, we save the tweets to disk so that we have an offline copy. After saving them, we load the tweets and assign them to the variable <code>css_gmu_tweets</code>:</p>
+<pre class="r"><code>user_css_gmu &lt;- read_rds(&quot;css_gmu_tweets.rds&quot;)</code></pre>
+<ol start="5" class="example" type="1">
+<li><p>Create a timeline plot of <a href="https://twitter.com/CSS_GMU"><code>@CSS_GMU</code></a>’s monthly tweeting frequency since the account was first created using the following&nbsp;code:</p>
+<pre class="r"><code>css_gmu_tweets %&gt;%
+  tweets_data() %&gt;%
+  ts_plot(by = &quot;months&quot;) +
+  theme(plot.title = element_text(face = &quot;bold&quot;)) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = &quot;Frequency of @CSS_GMU Twitter statuses since account creation&quot;,
+    subtitle = &quot;Twitter status (tweet) counts aggregated using one-month intervals&quot;,
+    caption = &quot;\nSource: Data collected from Twitter&#39;s REST API via rtweet&quot;
+  )</code></pre>
+<p>You’ll notice that there’s a cyclical pattern to the tweet frequency for this account. Explain why this might be happening by suggesting a reasonable hypothesis for the mechanism behind this cyclic&nbsp;behavior.</p></li>
+</ol>
+<h2 id="choose-your-own-adventure">Choose your own&nbsp;adventure</h2>
+<p>Now it’s your turn to tell a story. Pick a Twitter account, any account, and explore it using the tools that were just introduced to you. Your exploratory analysis should be encapsulated in no less than 4 – 6 separate plots, which you will then interpret and weave into a coherent narrative about your chosen account. This is an open-ended lab report, so go ahead and have some fun with&nbsp;it!</p>
+<div class="callout primary">
+<p><strong>The grading will be heavily weighted towards this section and what you submit for this part of the&nbsp;lab.</strong></p>
+</div>
+<div class="callout secondary">
+<ul>
+<li><p>While your story should start with one Twitter account, you are welcome to branch outward by looking at the attributes of the account’s friends and followers to enrich and extend your&nbsp;analysis.</p></li>
+<li><p>You are welcome to use any of the available functions in <span class="monospace">rtweet</span>, even if they weren’t shown in the&nbsp;exercises.</p></li>
+<li>If you want to try and do some basic analysis on the actual text of the tweets, you’re welcome to give it a try, although this is in no way required. The <a href="https://www.tidytextmining.com/"><span class="monospace">tidytext</span> R package</a> is a good place to start if you want to try this&nbsp;out.</li>
+</ul>
+</div>
+<h2 id="how-to-submit">How to&nbsp;submit</h2>
+<p>When you are ready to submit, be sure to save, commit, and push your final result so that everything is synchronized to Github. Then, navigate to <strong>your copy</strong> of the Github repository you used for this assignment. You should see your repository, along with the updated files that you just synchronized to Github. Confirm that your files are up-to-date, and then do the following&nbsp;steps:</p>
+<div class="pull-request">
+<ul>
+<li><p>Click the <em>Pull Requests</em> tab near the top of the&nbsp;page.</p></li>
+<li><p>Click the green button that says “New pull&nbsp;request”.</p></li>
+<li><p>Click the dropdown menu button labeled “base:”, and select the option <code>starting</code>.</p></li>
+<li><p>Confirm that the dropdown menu button labeled “compare:” is set to <code>master</code>.</p></li>
+<li><p>Click the green button that says “Create pull&nbsp;request”.</p></li>
+<li><p>Give the <em>pull request</em> the following title: <span class="monospace">Submission: Lab 5, FirstName LastName</span>, replacing <span class="monospace">FirstName</span> and <span class="monospace">LastName</span> with your actual first and last&nbsp;name.</p></li>
+<li><p>In the messagebox, write: <span class="monospace">My lab report is ready for grading @jkglasbrenner</span>.</p></li>
+<li>Click “Create pull request” to lock in your&nbsp;submission.</li>
+</ul>
+</div>
+<h2 id="credits">Credits</h2>
+<p>This lab is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>. Lab instructions and exercises originally created by Joe Shaheen for <span class="caps">CDS</span>-102. Updates to exercises and instructions for compatibility with the <a href="https://github.com/mkearney/rtweet"><span class="monospace">rtweet</span></a> package by James Glasbrenner. Figures in the <a href="#creating-an-app-on-the-twitter-api">Creating an App on the Twitter <span class="caps">API</span></a> section are from the <a href="#rtweet-obtaining-access-tokens"><em>Obtaining and using access tokens</em></a> <span class="monospace">rtweet</span>&nbsp;vignette.</p>
+
+</div>  </article>
+    </div>
+<footer class="page-footer">
+    <div class="footer-grid-container">
+      Except where otherwise noted, site materials are created by
+      <a href="https://cos.gmu.edu/cds/faculty-profile-james-glasbrenner/">
+        James K. Glasbrenner
+      </a>
+      and licensed under a
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+        Creative Commons Attribution-ShareAlike 4.0 International License
+      </a>.
+    </div>
+</footer><script src="https://mason-su18-cds-102-2a1.github.io/theme/js/cds101.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/highlightjs/highlight.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/katex/katex.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/katex/contrib/auto-render.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/wookmark/wookmark.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/fontawesome/fontawesome-all.min.js"></script>
+  <script src="https://mason-su18-cds-102-2a1.github.io/theme/js/vendor/vendorInit.js"></script>
+  </body>
+</html>
