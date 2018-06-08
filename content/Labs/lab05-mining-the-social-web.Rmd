@@ -34,42 +34,47 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 }
 ```
 
-Once [[devtools]{.monospace}][r-devtools-github] is installed, run the following code to install the latest versions of the [[fs]{.monospace}][r-fs-github] and [[rtweet]{.monospace}][r-rtweet-github] packages:
+We also need to install the [fs]{.monospace} package from the extended [tidyverse]{.monospace} to help with constructing paths to files that are compatible with any operating system:
 
 ```r
-devtools::install_github("r-lib/fs")
+install.packages("fs")
+```
+
+Once [[devtools]{.monospace}][r-devtools-github] and [[fs]{.monospace}][r-fs-github] are installed, run the following code to install the latest version of the [[rtweet]{.monospace}][r-rtweet-github] package:
+
+```r
 devtools::install_github("mkearney/rtweet")
 ```
 
 We also run the following code in our *Console* window in order to create an [.Renviron]{.monospace} file and the folders where we will be saving our **Twitter authentication token**.
 
 ```r
-location_to_save_token <- path(path_home(), ".config", "R", "twitter")
-token_file <- path(location_to_save_token, "twitter_token", ext="rds")
-dir_create(path = location_to_save_token, recursive = TRUE)
+location_to_save_token <- fs::path(fs::path_home(), ".config", "R", "twitter")
+token_file <- fs::path(location_to_save_token, "twitter_token", ext="rds")
+fs::dir_create(path = location_to_save_token, recursive = TRUE)
 
-renviron_file <- path(path_home(), ".Renviron")
-file_create(path = renviron_file)
-file_chmod(path = renviron_file, mode = "600")
+renviron_file <- fs::path(fs::path_home(), ".Renviron")
+fs::file_create(path = renviron_file)
+fs::file_chmod(path = renviron_file, mode = "600")
 
-if (!str_detect(read_file(file = renviron_file), "TWITTER_APP=")) {
-  write_file(
-    x = glue(
+if (!stringr::str_detect(readr::read_file(file = renviron_file), "TWITTER_APP=")) {
+  readr::write_file(
+    x = glue::glue(
       "TWITTER_APP=rtweet_tokens\n",
       "TWITTER_CONSUMER_KEY=\n",
       "TWITTER_CONSUMER_SECRET=\n",
       "TWITTER_ACCESS_TOKEN=\n",
-      "TWITTER_ACCESS_TOKEN_SECRET=\n"
+      "TWITTER_ACCESS_TOKEN_SECRET=\n\n"
     ),
-    path = path(path_home(), ".Renviron"),
+    path = fs::path(fs::path_home(), ".Renviron"),
     append = TRUE
   )
 }
 
-if (!str_detect(read_file(file = renviron_file), "TWITTER_PAT=")) {
-  write_file(
-    x = glue("TWITTER_PAT={token_file}\n\n"),
-    path = path(path_home(), ".Renviron"),
+if (!stringr::str_detect(readr::read_file(file = renviron_file), "TWITTER_PAT=")) {
+  readr::write_file(
+    x = glue::glue("TWITTER_PAT={token_file}\n\n"),
+    path = fs::path(fs::path_home(), ".Renviron"),
     append = TRUE
   )
 }
@@ -104,14 +109,25 @@ knitr::include_graphics("img/twitter_app_rtweet_token.png")
 
 In the input boxes where it asks you to provide a **Name**, **Description**, and **Website**, use the following:
 
-*   **Name:** [rtweet_tokens]{.monospace}
+*   **Name:** [cds-102-lab-\<extra\>]{.monospace}
 
-*   **Description:** CDS 102 lab
+*   **Description:** [CDS 102 lab]{.monospace}
 
-*   **Website:** <http://cds101.com>
+*   **Website:** [http<!-- breaklink -->://cds101.com]{.monospace}
 
-It's recommended by the [[rtweet]{.monospace}][r-rtweet-github] developers to set the **Callback URL** to `http://127.0.0.1:1410`.
-Finally, check the **Developer Agreement** box and then click on **Create your Twitter Application** button.
+*   **Callback URL:** [http<!-- breaklink -->://127.0.0.1:1410]{.monospace}
+
+*   <i class="fas fa-check-square"></i> Yes, I have read and agree to the Twitter Developer Agreement
+
+:::::{.callout .primary}
+*   In **Name**, replace [\<extra\>]{.monospace} with a sequence of letters or numbers of your choosing
+
+*   The setting for **Callback URL** is recommended by the [[rtweet]{.monospace}][r-rtweet-github] developers
+
+*   Check the box next to the **Developer Agreement**
+:::::
+
+Once you have filled in all the boxes in the way shown above, click on **Create your Twitter Application** button.
 
 ```{r twitter-app-token-created, echo = FALSE}
 knitr::include_graphics("img/twitter_app_rtweet_created.png")
@@ -133,13 +149,13 @@ Then, in the RStudio menubar, click **Session**, then click **Restart R**.
 Now that we have the authentication token codes saved to our account, let's connect R and [rtweet]{.monospace} using the following code:
 
 ```r
-twitter_token <- create_token(
+twitter_token <- rtweet::create_token(
   app = Sys.getenv("TWITTER_APP"),
   consumer_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
   consumer_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
   access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
   access_secret = Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
-  set_renv = FALSE 
+  set_renv = FALSE
 )
 ```
 
@@ -147,11 +163,11 @@ Running the above command will complete the connection process and now you can s
 Before we start, let's perform one last configuration that will make it so that you do not need to re-run the above code each time you close and re-open RStudio:
 
 ```r
-location_to_save_token <- path(path_home(), ".config", "R", "twitter")
-token_file <- path(location_to_save_token, "twitter_token", ext="rds")
-dir_create(path = location_to_save_token, recursive = TRUE)
-write_rds(x = twitter_token, path = token_file)
-file_chmod(path = token_file, mode = "600")
+location_to_save_token <- fs::path(fs::path_home(), ".config", "R", "twitter")
+token_file <- fs::path(location_to_save_token, "twitter_token", ext="rds")
+fs::dir_create(path = location_to_save_token, recursive = TRUE)
+readr::write_rds(x = twitter_token, path = token_file)
+fs::file_chmod(path = token_file, mode = "600")
 ```
 
 This code saves the configuration information about your Twitter authentication tokens and should be automatically loaded for you the next time you restart RStudio.
