@@ -7,36 +7,37 @@
 &lt;pre class="r"&gt;&lt;code&gt;if (!requireNamespace(&amp;quot;devtools&amp;quot;, quietly = TRUE)) {
   install.packages(&amp;quot;devtools&amp;quot;)
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Once &lt;a href="https://github.com/r-lib/devtools"&gt;&lt;span class="monospace"&gt;devtools&lt;/span&gt;&lt;/a&gt; is installed, run the following code to install the latest versions of the &lt;a href="https://github.com/r-lib/fs"&gt;&lt;span class="monospace"&gt;fs&lt;/span&gt;&lt;/a&gt; and &lt;a href="https://github.com/mkearney/rtweet"&gt;&lt;span class="monospace"&gt;rtweet&lt;/span&gt;&lt;/a&gt;&amp;nbsp;packages:&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;devtools::install_github(&amp;quot;r-lib/fs&amp;quot;)
-devtools::install_github(&amp;quot;mkearney/rtweet&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We also need to install the &lt;span class="monospace"&gt;fs&lt;/span&gt; package from the extended &lt;span class="monospace"&gt;tidyverse&lt;/span&gt; to help with constructing paths to files that are compatible with any operating&amp;nbsp;system:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;install.packages(&amp;quot;fs&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once &lt;a href="https://github.com/r-lib/devtools"&gt;&lt;span class="monospace"&gt;devtools&lt;/span&gt;&lt;/a&gt; and &lt;a href="https://github.com/r-lib/fs"&gt;&lt;span class="monospace"&gt;fs&lt;/span&gt;&lt;/a&gt; are installed, run the following code to install the latest version of the &lt;a href="https://github.com/mkearney/rtweet"&gt;&lt;span class="monospace"&gt;rtweet&lt;/span&gt;&lt;/a&gt;&amp;nbsp;package:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;devtools::install_github(&amp;quot;mkearney/rtweet&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We also run the following code in our &lt;em&gt;Console&lt;/em&gt; window in order to create an &lt;span class="monospace"&gt;.Renviron&lt;/span&gt; file and the folders where we will be saving our &lt;strong&gt;Twitter authentication token&lt;/strong&gt;.&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;location_to_save_token &amp;lt;- path(path_home(), &amp;quot;.config&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;twitter&amp;quot;)
-token_file &amp;lt;- path(location_to_save_token, &amp;quot;twitter_token&amp;quot;, ext=&amp;quot;rds&amp;quot;)
-dir_create(path = location_to_save_token, recursive = TRUE)
+&lt;pre class="r"&gt;&lt;code&gt;location_to_save_token &amp;lt;- fs::path(fs::path_home(), &amp;quot;.config&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;twitter&amp;quot;)
+token_file &amp;lt;- fs::path(location_to_save_token, &amp;quot;twitter_token&amp;quot;, ext=&amp;quot;rds&amp;quot;)
+fs::dir_create(path = location_to_save_token, recursive = TRUE)
 
-renviron_file &amp;lt;- path(path_home(), &amp;quot;.Renviron&amp;quot;)
-file_create(path = renviron_file)
-file_chmod(path = renviron_file, mode = &amp;quot;600&amp;quot;)
+renviron_file &amp;lt;- fs::path(fs::path_home(), &amp;quot;.Renviron&amp;quot;)
+fs::file_create(path = renviron_file)
+fs::file_chmod(path = renviron_file, mode = &amp;quot;600&amp;quot;)
 
-if (!str_detect(read_file(file = renviron_file), &amp;quot;TWITTER_APP=&amp;quot;)) {
-  write_file(
-    x = glue(
+if (!stringr::str_detect(readr::read_file(file = renviron_file), &amp;quot;TWITTER_APP=&amp;quot;)) {
+  readr::write_file(
+    x = glue::glue(
       &amp;quot;TWITTER_APP=rtweet_tokens\n&amp;quot;,
       &amp;quot;TWITTER_CONSUMER_KEY=\n&amp;quot;,
       &amp;quot;TWITTER_CONSUMER_SECRET=\n&amp;quot;,
       &amp;quot;TWITTER_ACCESS_TOKEN=\n&amp;quot;,
-      &amp;quot;TWITTER_ACCESS_TOKEN_SECRET=\n&amp;quot;
+      &amp;quot;TWITTER_ACCESS_TOKEN_SECRET=\n\n&amp;quot;
     ),
-    path = path(path_home(), &amp;quot;.Renviron&amp;quot;),
+    path = fs::path(fs::path_home(), &amp;quot;.Renviron&amp;quot;),
     append = TRUE
   )
 }
 
-if (!str_detect(read_file(file = renviron_file), &amp;quot;TWITTER_PAT=&amp;quot;)) {
-  write_file(
-    x = glue(&amp;quot;TWITTER_PAT={token_file}\n\n&amp;quot;),
-    path = path(path_home(), &amp;quot;.Renviron&amp;quot;),
+if (!stringr::str_detect(readr::read_file(file = renviron_file), &amp;quot;TWITTER_PAT=&amp;quot;)) {
+  readr::write_file(
+    x = glue::glue(&amp;quot;TWITTER_PAT={token_file}\n\n&amp;quot;),
+    path = fs::path(fs::path_home(), &amp;quot;.Renviron&amp;quot;),
     append = TRUE
   )
 }
@@ -53,31 +54,40 @@ file.edit(renviron_file)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="https://mason-su18-cds-102-2a1.github.io/img/twitter_app_rtweet_token.png" title="plot of chunk creating-twitter-app-token" alt="plot of chunk creating-twitter-app-token" width="80%" style="display: block; margin: auto;" /&gt;&lt;/p&gt;
 &lt;p&gt;In the input boxes where it asks you to provide a &lt;strong&gt;Name&lt;/strong&gt;, &lt;strong&gt;Description&lt;/strong&gt;, and &lt;strong&gt;Website&lt;/strong&gt;, use the&amp;nbsp;following:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; &lt;span class="monospace"&gt;rtweet_tokens&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Description:&lt;/strong&gt; &lt;span class="caps"&gt;CDS&lt;/span&gt; 102&amp;nbsp;lab&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Website:&lt;/strong&gt; &lt;a href="http://cds101.com" class="uri"&gt;http://cds101.com&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; &lt;span class="monospace"&gt;cds-102-lab-&amp;lt;extra&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Description:&lt;/strong&gt; &lt;span class="monospace"&gt;&lt;span class="caps"&gt;CDS&lt;/span&gt; 102&amp;nbsp;lab&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Website:&lt;/strong&gt; &lt;span class="monospace"&gt;http&lt;!-- breaklink --&gt;://cds101.com&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Callback &lt;span class="caps"&gt;URL&lt;/span&gt;:&lt;/strong&gt; &lt;span class="monospace"&gt;http&lt;!-- breaklink --&gt;://127.0.0.1:1410&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;i class="fas fa-check-square"&gt;&lt;/i&gt; Yes, I have read and agree to the Twitter Developer&amp;nbsp;Agreement&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;It’s recommended by the &lt;a href="https://github.com/mkearney/rtweet"&gt;&lt;span class="monospace"&gt;rtweet&lt;/span&gt;&lt;/a&gt; developers to set the &lt;strong&gt;Callback &lt;span class="caps"&gt;URL&lt;/span&gt;&lt;/strong&gt; to &lt;code&gt;http://127.0.0.1:1410&lt;/code&gt;. Finally, check the &lt;strong&gt;Developer Agreement&lt;/strong&gt; box and then click on &lt;strong&gt;Create your Twitter Application&lt;/strong&gt;&amp;nbsp;button.&lt;/p&gt;
+&lt;div class="callout primary"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;In &lt;strong&gt;Name&lt;/strong&gt;, replace &lt;span class="monospace"&gt;&amp;lt;extra&amp;gt;&lt;/span&gt; with a sequence of letters or numbers of your&amp;nbsp;choosing&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The setting for &lt;strong&gt;Callback &lt;span class="caps"&gt;URL&lt;/span&gt;&lt;/strong&gt; is recommended by the &lt;a href="https://github.com/mkearney/rtweet"&gt;&lt;span class="monospace"&gt;rtweet&lt;/span&gt;&lt;/a&gt;&amp;nbsp;developers&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Check the box next to the &lt;strong&gt;Developer&amp;nbsp;Agreement&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Once you have filled in all the boxes in the way shown above, click on &lt;strong&gt;Create your Twitter Application&lt;/strong&gt;&amp;nbsp;button.&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://mason-su18-cds-102-2a1.github.io/img/twitter_app_rtweet_created.png" title="plot of chunk twitter-app-token-created" alt="plot of chunk twitter-app-token-created" width="80%" style="display: block; margin: auto;" /&gt;&lt;/p&gt;
 &lt;p&gt;After creating the app, click the tab labeled &lt;strong&gt;Keys and Access Tokens&lt;/strong&gt; to retrieve your consumer (api) and secret keys. The top of the page will look like&amp;nbsp;this:&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://mason-su18-cds-102-2a1.github.io/img/twitter_app_token_keys.png" title="plot of chunk twitter-app-token-keys" alt="plot of chunk twitter-app-token-keys" width="80%" style="display: block; margin: auto;" /&gt;&lt;/p&gt;
 &lt;p&gt;You will now need to copy and paste the codes for the &lt;strong&gt;Consumer Key&lt;/strong&gt;, &lt;strong&gt;Consumer Secret&lt;/strong&gt;, &lt;strong&gt;Access Token&lt;/strong&gt;, and &lt;strong&gt;Access Token Secret&lt;/strong&gt; into the &lt;span class="monospace"&gt;.Renviron&lt;/span&gt; file that we opened at the very end of the previous section. Copy each of these codes, match it to one of the four keywords in the &lt;span class="monospace"&gt;.Renviron&lt;/span&gt; file, and paste your copied code in the space immediately to the right of the equals &lt;span class="monospace"&gt;=&lt;/span&gt; sign. Then, in the RStudio menubar, click &lt;strong&gt;Session&lt;/strong&gt;, then click &lt;strong&gt;Restart R&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 id="connecting-your-r-session-to-twitter"&gt;Connecting your R session to&amp;nbsp;Twitter&lt;/h2&gt;
 &lt;p&gt;Now that we have the authentication token codes saved to our account, let’s connect R and &lt;span class="monospace"&gt;rtweet&lt;/span&gt; using the following&amp;nbsp;code:&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;twitter_token &amp;lt;- create_token(
+&lt;pre class="r"&gt;&lt;code&gt;twitter_token &amp;lt;- rtweet::create_token(
   app = Sys.getenv(&amp;quot;TWITTER_APP&amp;quot;),
   consumer_key = Sys.getenv(&amp;quot;TWITTER_CONSUMER_KEY&amp;quot;),
   consumer_secret = Sys.getenv(&amp;quot;TWITTER_CONSUMER_SECRET&amp;quot;),
   access_token = Sys.getenv(&amp;quot;TWITTER_ACCESS_TOKEN&amp;quot;),
   access_secret = Sys.getenv(&amp;quot;TWITTER_ACCESS_TOKEN_SECRET&amp;quot;),
-  set_renv = FALSE 
+  set_renv = FALSE
 )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Running the above command will complete the connection process and now you can start using the Twitter &lt;span class="caps"&gt;API&lt;/span&gt;! Before we start, let’s perform one last configuration that will make it so that you do not need to re-run the above code each time you close and re-open&amp;nbsp;RStudio:&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;location_to_save_token &amp;lt;- path(path_home(), &amp;quot;.config&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;twitter&amp;quot;)
-token_file &amp;lt;- path(location_to_save_token, &amp;quot;twitter_token&amp;quot;, ext=&amp;quot;rds&amp;quot;)
-dir_create(path = location_to_save_token, recursive = TRUE)
-write_rds(x = twitter_token, path = token_file)
-file_chmod(path = token_file, mode = &amp;quot;600&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;location_to_save_token &amp;lt;- fs::path(fs::path_home(), &amp;quot;.config&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;twitter&amp;quot;)
+token_file &amp;lt;- fs::path(location_to_save_token, &amp;quot;twitter_token&amp;quot;, ext=&amp;quot;rds&amp;quot;)
+fs::dir_create(path = location_to_save_token, recursive = TRUE)
+readr::write_rds(x = twitter_token, path = token_file)
+fs::file_chmod(path = token_file, mode = &amp;quot;600&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This code saves the configuration information about your Twitter authentication tokens and should be automatically loaded for you the next time you restart&amp;nbsp;RStudio.&lt;/p&gt;
 &lt;div class="callout primary"&gt;
 &lt;p&gt;&lt;strong&gt;Keep your access token codes private:&lt;/strong&gt; It may seem like it would be more convenient to just store the consumer key, consumer secret, access token, and access token secret directly inside your RMarkdown file. Do not do this! These codes will give &lt;em&gt;anyone&lt;/em&gt; that has them direct access to and control over your account. Therefore you should store the token codes somewhere safe in your RStudio Server account, which the above instructions helped you&amp;nbsp;accomplish.&lt;/p&gt;
