@@ -169,7 +169,7 @@ get_friends(&amp;quot;CSS_GMU&amp;quot;) %&amp;gt;%
 &lt;pre class="r"&gt;&lt;code&gt;get_timeline(user = &amp;quot;CSS_GMU&amp;quot;, n = 500) %&amp;gt;%
   write_rds(path = path(&amp;quot;css_gmu_all_tweets&amp;quot;, ext = &amp;quot;rds&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;As usual, we save the tweets to disk so that we have an offline copy. After saving them, we load the tweets and assign them to the variable &lt;code&gt;css_gmu_tweets&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;user_css_gmu &amp;lt;- read_rds(&amp;quot;css_gmu_tweets.rds&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;css_gmu_tweets &amp;lt;- read_rds(&amp;quot;css_gmu_all_tweets.rds&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start="5" class="example" type="1"&gt;
 &lt;li&gt;&lt;p&gt;Create a timeline plot of &lt;a href="https://twitter.com/CSS_GMU"&gt;&lt;span class="monospace"&gt;@CSS_GMU&lt;/span&gt;&lt;/a&gt;’s monthly tweeting frequency since the account was first created using the following&amp;nbsp;code:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;css_gmu_tweets %&amp;gt;%
