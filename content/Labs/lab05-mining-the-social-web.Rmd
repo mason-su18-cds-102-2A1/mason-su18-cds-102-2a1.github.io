@@ -314,7 +314,7 @@ As usual, we save the tweets to disk so that we have an offline copy.
 After saving them, we load the tweets and assign them to the variable `css_gmu_tweets`:
 
 ```r
-user_css_gmu <- read_rds("css_gmu_tweets.rds")
+css_gmu_tweets <- read_rds("css_gmu_all_tweets.rds")
 ```
     
 @.  Create a timeline plot of [[\@CSS_GMU]{.monospace}][css-gmu-twitter-account]'s monthly tweeting frequency since the account was first created using the following code:
