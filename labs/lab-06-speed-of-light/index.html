@@ -56,7 +56,6 @@
 <ol start="4" class="example" type="1">
 <li><p>Calculate the following summary statistics for the filtered and unfiltered versions of the dataset: the mean, median, maximum, minimum, standard deviation, and the inter-quartile range (<span class="caps">IQR</span>). For the unfiltered dataset, this would&nbsp;be:</p>
 <pre class="r"><code>newcomb %&gt;%
-  mutate(rank = min_rank(time)) %&gt;%
   summarize(
     mean = mean(time),
     median = median(time),
@@ -120,7 +119,7 @@
 newcomb_null %&gt;%
   filter(
     stat &gt;= 33.02 + point_estimate_difference
-    | stat &lt;= 33.02 - point_estimate_difference) %&gt;%
+    | stat &lt;= 33.02 - point_estimate_difference
   ) %&gt;%
   summarize(pvalue = n() / 10000)</code></pre>
 <p>If the computed p-value is less than 0.05, our significance level, then we reject the null hypothesis in favor of the alternative&nbsp;hypothesis.</p>
