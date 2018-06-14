@@ -45,7 +45,7 @@ Let's start by doing the usual practice of getting to know our dataset.
 There's only one relevant variable in this dataset, `time`, so it's the distribution of the measured times that matter.
 Let's appraise the distribution of time measurements by creating some visualizations:
 
-@.  Visualize the dataset distribution as a boxplot --- use `geom_boxplot()` --- and as a probability mass function (PMF) --- use `geom_histogram()` with `y = ..density..` inside `aes()` --- with a binwidth that allows you can see the full dataset (only identical numbers should have counts larger than 1).
+@.  Visualize the dataset distribution as a boxplot --- use `geom_boxplot(aes(x = "unfiltered", y = time)) + coord_flip()` --- and as a probability mass function (PMF) --- use `geom_histogram()` with `y = ..density..` inside `aes()` --- with a binwidth that allows you can see the full dataset (only identical numbers should have counts larger than 1).
     Describe the center, shape, and spread of the distribution (don't forget to mention the outliers).
 
 One of the things you'll immediately notice when visualizing this dataset is how pronounced the outliers are.
