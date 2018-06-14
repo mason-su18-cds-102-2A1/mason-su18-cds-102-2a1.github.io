@@ -1,5 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>CDS-102: Introduction to Computational and Data Sciences Lab</title><link href="https://mason-su18-cds-102-2a1.github.io/" rel="alternate"></link><link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" rel="self"></link><id>https://mason-su18-cds-102-2a1.github.io/</id><updated>2018-06-07T13:30:00-04:00</updated><entry><title>Mining the social web</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-05-mining-the-social-web/" rel="alternate"></link><published>2018-06-07T13:30:00-04:00</published><updated>2018-06-07T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-06-07:/labs/lab-05-mining-the-social-web/</id><summary type="html">Accessing the Twitter &lt;span class="caps"&gt;API&lt;/span&gt; using &lt;span style="monospace"&gt;rtweet&lt;/span&gt; and exploring what you can do with the harvested&amp;nbsp;data</summary><content type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>CDS-102: Introduction to Computational and Data Sciences Lab</title><link href="https://mason-su18-cds-102-2a1.github.io/" rel="alternate"></link><link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" rel="self"></link><id>https://mason-su18-cds-102-2a1.github.io/</id><updated>2018-06-14T13:30:00-04:00</updated><entry><title>Speed of light</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-06-speed-of-light/" rel="alternate"></link><published>2018-06-14T13:30:00-04:00</published><updated>2018-06-14T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-06-14:/labs/lab-06-speed-of-light/</id><summary type="html">&lt;span style="monospace"&gt;infer&lt;/span&gt; the speed of light using Simon Newcomb&amp;#8217;s famous&amp;nbsp;dataset</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;This week’s lab will show you how to apply statistical methods and resampling techniques to a dataset from the natural sciences, Simon Newcomb’s measurements of the speed of light. Through this, we will see how statistical methods can help us to put the scientific method into practice and provide you with hands-on experience with the kinds of data analysis a scientist will use after completing a series of experimental&amp;nbsp;measurements.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="natural-science-data-science"&gt;Natural science, data&amp;nbsp;science&lt;/h2&gt;
+&lt;p&gt;Many of the datasets we’ve worked through in our labs this semester have come from fields outside of the natural sciences. That doesn’t mean that the skills we’re building don’t have a useful application in fields such as physics, chemistry, and biology. For that reason, this week we will apply statistical methods to a dataset from the natural sciences that can be used to calculate the speed of&amp;nbsp;light.&lt;/p&gt;
+&lt;h2 id="about-this-weeks-dataset"&gt;About this week’s&amp;nbsp;dataset&lt;/h2&gt;
+&lt;p&gt;The astronomer and applied mathematician Simon Newcomb collected this dataset over three separate days between the dates of July 24, 1882 and September 5, 1882 &lt;span class="citation" data-cites="stigler:robust Newcomb:1882"&gt; [1,2]&lt;/span&gt; in Washington, &lt;span class="caps"&gt;DC&lt;/span&gt;. He performed the measurements using an apparatus design similar to Léon Foucault’s system of rotating mirrors &lt;span class="citation" data-cites="jaffe:1960"&gt; [3]&lt;/span&gt;, which allowed Newcomb to measure the time it took a beam of light to travel from Fort Myer on the west bank of the Potomac to a mirror located at the Washington monument and back &lt;span class="citation" data-cites="stigler:robust Carter:2002"&gt; [1,4]&lt;/span&gt;, corresponding to a distance of 7443.73 meters. This dataset contains 66 observations, which have been transformed so that the dataset could be analyzed as a series of integers. To convert a dataset value &lt;span class="math inline"&gt;\(t\)&lt;/span&gt; to the actual transit time &lt;span class="math inline"&gt;\(t_{meas}\)&lt;/span&gt; in seconds, use the&amp;nbsp;formula,&lt;/p&gt;
+&lt;p&gt;&lt;span class="math display"&gt;\[\text{t}_{\text{meas}}=\dfrac{\dfrac{\text{t}}{1000}+24.8}{1000000}\]&lt;/span&gt;&lt;/p&gt;
+&lt;h2 id="visualizing-and-quantifying-the-distribution"&gt;Visualizing and quantifying the&amp;nbsp;distribution&lt;/h2&gt;
+&lt;p&gt;Let’s start by doing the usual practice of getting to know our dataset. There’s only one relevant variable in this dataset, &lt;code&gt;time&lt;/code&gt;, so it’s the distribution of the measured times that matter. Let’s appraise the distribution of time measurements by creating some&amp;nbsp;visualizations:&lt;/p&gt;
+&lt;ol class="example" type="1"&gt;
+&lt;li&gt;Visualize the dataset distribution as a boxplot — use &lt;code&gt;geom_boxplot(aes(x = &amp;quot;unfiltered&amp;quot;, y = time)) + coord_flip()&lt;/code&gt; — and as a probability mass function (&lt;span class="caps"&gt;PMF&lt;/span&gt;) — use &lt;code&gt;geom_histogram()&lt;/code&gt; with &lt;code&gt;y = ..density..&lt;/code&gt; inside &lt;code&gt;aes()&lt;/code&gt; — with a binwidth that allows you can see the full dataset (only identical numbers should have counts larger than 1). Describe the center, shape, and spread of the distribution (don’t forget to mention the&amp;nbsp;outliers).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;One of the things you’ll immediately notice when visualizing this dataset is how pronounced the outliers are. The experimental setup involved a rapidly rotating mirror that had to be precisely tuned. Given that the speed of light is so high, small variations in the rotation speed could significantly impact the measured travel times. As such, it’s quite possible these outliers are due to experimental error. However, without further information we cannot be sure that this is the case. Thus, the best choice is to analyze two versions of the dataset, one with the outliers removed and one where we keep all data&amp;nbsp;points.&lt;/p&gt;
+&lt;ol start="2" class="example" type="1"&gt;
+&lt;li&gt;Create a second, filtered version of the dataset that removes the outliers that you see in the&amp;nbsp;distribution.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Another useful visualization for understanding a dataset is the cumulative distribution function (&lt;span class="caps"&gt;CDF&lt;/span&gt;), which creates a map from the distribution’s values to their respective percentiles. To plot the &lt;span class="caps"&gt;CDF&lt;/span&gt; for a data distribution, we can use the convenient &lt;code&gt;stat_ecdf()&lt;/code&gt; function in &lt;span class="monospace"&gt;ggplot2&lt;/span&gt;.&lt;/p&gt;
+&lt;ol start="3" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Visualize the &lt;span class="caps"&gt;CDF&lt;/span&gt; for both the unfiltered and filtered versions of the dataset. The code for plotting the &lt;span class="caps"&gt;CDF&lt;/span&gt; for the unfiltered dataset would&amp;nbsp;be:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = newcomb) +
+  stat_ecdf(mapping = aes(x = time)) +
+  labs(y = &amp;quot;CDF&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;span class="caps"&gt;CDF&lt;/span&gt; for the filtered dataset can be visualized by slightly modifying the above code. Do you notice any changes in the &lt;span class="caps"&gt;CDF&lt;/span&gt; after removing the outliers from the original&amp;nbsp;dataset?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Finally, to wrap up this initial exploration, quantify these distributions by computing their summary statistics. The following functions in R are useful for computing the summary statistics of a&amp;nbsp;dataset:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;mean()&lt;/code&gt;: Computes the&amp;nbsp;average&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;median()&lt;/code&gt;: Computes the&amp;nbsp;median&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;min()&lt;/code&gt;: Finds the minimum&amp;nbsp;value&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;max()&lt;/code&gt;: Finds the maximum&amp;nbsp;value&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sd()&lt;/code&gt;: Computes the standard&amp;nbsp;deviation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;IQR()&lt;/code&gt;: Computes the interquartile&amp;nbsp;range&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start="4" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Calculate the following summary statistics for the filtered and unfiltered versions of the dataset: the mean, median, maximum, minimum, standard deviation, and the inter-quartile range (&lt;span class="caps"&gt;IQR&lt;/span&gt;). For the unfiltered dataset, this would&amp;nbsp;be:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;newcomb %&amp;gt;%
+  mutate(rank = min_rank(time)) %&amp;gt;%
+  summarize(
+    mean = mean(time),
+    median = median(time),
+    sd = sd(time),
+    iqr = IQR(time),
+    min = min(time),
+    max = max(time),
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which summary statistics are sensitive to removing the outliers? Which ones are&amp;nbsp;not?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="infering-a-trend"&gt;&lt;span class="monospace"&gt;infer&lt;/span&gt;ing a&amp;nbsp;trend&lt;/h2&gt;
+&lt;p&gt;Because there is a spread in the time measurements in Newcomb’s dataset, the measured time should be reported as a mean value with error bars. The error bars are typically found by calculating a confidence interval. A typical choice is a 95% confidence interval, which can be estimated using computational simulations that &lt;em&gt;resample&lt;/em&gt; the dataset. To perform our statistical resampling, we will use the &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;-inspired &lt;a href="https://github.com/andrewpbray/infer"&gt;&lt;span class="monospace"&gt;infer&lt;/span&gt; package&lt;/a&gt;, which will help us to compute confidence intervals and perform hypothesis&amp;nbsp;tests.&lt;/p&gt;
+&lt;div class="callout primary"&gt;
+&lt;p&gt;If not already installed, you can easily install &lt;code&gt;infer&lt;/code&gt; by running the following in your &lt;em&gt;Console&lt;/em&gt;&amp;nbsp;window:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;install.packages(&amp;quot;infer&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;To compute the confidence interval, we will need to generate the so-called &lt;em&gt;bootstrap distribution&lt;/em&gt;. We obtain the bootstrap simulation using the following&amp;nbsp;code:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;newcomb_bootstrap &amp;lt;- newcomb %&amp;gt;%
+  specify(formula = time ~ NULL) %&amp;gt;%
+  generate(reps = 10000, type = &amp;quot;bootstrap&amp;quot;) %&amp;gt;%
+  calculate(stat = &amp;quot;mean&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To visualize the bootstrap distribution as a probability mass function, we&amp;nbsp;run:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(newcomb_bootstrap) +
+  geom_histogram(
+    mapping = aes(x = stat, y = ..density..),
+    binwidth = 0.1
+  ) +
+  labs(x = &amp;quot;average time&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What the bootstrap has done is sample &lt;em&gt;with replacement&lt;/em&gt; from the dataset distribution. The basic idea is that, if the underlying sample is representative, then we can sample directly from it &lt;em&gt;as if it were the true population&lt;/em&gt;. The number of samples we pull is equal to the number of observations in the dataset. After we resample the data, we complete the procedure by calculating the &lt;code&gt;mean&lt;/code&gt; of the simulated sample (or &lt;code&gt;median&lt;/code&gt;, &lt;code&gt;sd&lt;/code&gt;, or some other parameter), after which we then repeat the process multiple times until we end up with a distribution of means. We can then use the bootstrap sample to determine the confidence interval for the sample statistic of&amp;nbsp;interest.&lt;/p&gt;
+&lt;p&gt;To construct the confidence interval, we need to “rank” the data in &lt;code&gt;stat&lt;/code&gt; from smallest to largest, which we can do with the &lt;code&gt;min_rank()&lt;/code&gt; function from &lt;span class="monospace"&gt;dplyr&lt;/span&gt;&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;newcomb_ci &amp;lt;- newcomb_bootstrap %&amp;gt;%
+  mutate(rank = min_rank(stat)) %&amp;gt;%
+  filter(between(rank, 0.025 * n(), 0.975 * n())) %&amp;gt;%
+  summarize(
+    lower_bound = min(stat),
+    upper_bound = max(stat)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To break down what is going on with the above set of&amp;nbsp;functions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;min_rank(stat)&lt;/code&gt; is the stat column’s sorting order from smallest to&amp;nbsp;largest&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;0.025 * n()&lt;/code&gt; is the rank that defines the threshold for the 2.5th&amp;nbsp;percentile&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;0.975 * n()&lt;/code&gt; is the rank that defines the threshold for the 97.5th&amp;nbsp;percentile&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;min(stat)&lt;/code&gt; and &lt;code&gt;max(stat)&lt;/code&gt; gives thresholds for the 2.5th and 97.5th&amp;nbsp;percentiles&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start="5" class="example" type="1"&gt;
+&lt;li&gt;Using the above code, compute the 95% confidence interval for the unfiltered and filtered dataset using the bootstrap method. How does the confidence interval change when you exclude the outliers (the filtered&amp;nbsp;dataset)?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;We can also use &lt;span class="monospace"&gt;infer&lt;/span&gt; to perform a two-sided hypothesis test. The code for doing this is relatively similar, we just need to add an additional &lt;code&gt;hypothesize()&lt;/code&gt; function. Of course, in order to run a hypothesis test we need some sort of hypothesis to test against, which will allow us to define the &lt;strong&gt;null distribution&lt;/strong&gt;. We also need to select a significance level &lt;span class="math inline"&gt;\(\alpha\)&lt;/span&gt;, which serves as a kind of evidence threshold that we use when determining whether or not we can reject the null hypothesis. A common choice for &lt;span class="math inline"&gt;\(\alpha\)&lt;/span&gt; is 0.05, which is the value that we will&amp;nbsp;use.&lt;/p&gt;
+&lt;p&gt;Subsequent work on the speed of light has determined that, given the conditions of Newcomb’s setup, that this experiment should yield a “true” mean value of 33.02. With this value in hand, we can formalize the question of whether or not the gap separating our dataset’s distribution could have been generated by chance&amp;nbsp;alone.&lt;/p&gt;
+&lt;ol start="6" class="example" type="1"&gt;
+&lt;li&gt;Write down (in words) the &lt;strong&gt;null hypothesis&lt;/strong&gt; and the &lt;strong&gt;alternative hypothesis&lt;/strong&gt; for comparing this dataset against the “true” mean value of&amp;nbsp;33.02.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;We modify our code as follows in order to generate the &lt;strong&gt;null distribution&lt;/strong&gt; needed to perform the hypothesis&amp;nbsp;test:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;newcomb_null &amp;lt;- newcomb %&amp;gt;%
+  specify(formula = time ~ NULL) %&amp;gt;%
+  hypothesize(null = &amp;quot;point&amp;quot;, mu = 33.02) %&amp;gt;%
+  generate(reps = 10000, type = &amp;quot;bootstrap&amp;quot;) %&amp;gt;%
+  calculate(stat = &amp;quot;mean&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have a null distribution, we can use it in combination with the experimental average for the speed of light to calculate the &lt;strong&gt;p-value&lt;/strong&gt;. The &lt;strong&gt;p-value&lt;/strong&gt; is simply the probability that, were we to repeat the experiment again, we would obtain a result that is the same &lt;strong&gt;or more extreme&lt;/strong&gt; than the reported experimental measurement. Put another way, we need to count the number of data points in the simulated null distribution that are the same or more extreme than the experimental measurement. Assuming that the average speed of light for the unfiltered dataset is assigned to the variable &lt;code&gt;average_light_speed&lt;/code&gt;, we would run the&amp;nbsp;following:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;point_estimate_difference &amp;lt;- abs(average_light_speed - 33.02)  # abs() computes absolute value
+newcomb_null %&amp;gt;%
+  filter(
+    stat &amp;gt;= 33.02 + point_estimate_difference
+    | stat &amp;lt;= 33.02 - point_estimate_difference) %&amp;gt;%
+  ) %&amp;gt;%
+  summarize(pvalue = n() / 10000)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If the computed p-value is less than 0.05, our significance level, then we reject the null hypothesis in favor of the alternative&amp;nbsp;hypothesis.&lt;/p&gt;
+&lt;ol start="7" class="example" type="1"&gt;
+&lt;li&gt;Use the &lt;code&gt;infer&lt;/code&gt; package to run the two-sided hypothesis test with &lt;span class="math inline"&gt;\(\alpha = 0.05\)&lt;/span&gt; between the ideal value of 33.02 and unfiltered and filtered datasets. Can we reject the null hypothesis for either version (filtered or unfiltered) of the&amp;nbsp;dataset?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="additional-questions"&gt;Additional&amp;nbsp;questions&lt;/h2&gt;
+&lt;div class="additional-questions"&gt;
+&lt;ul&gt;
+&lt;li&gt;From your analysis, does Newcomb’s dataset seem to agree with the “true” mean value of 33.02? Or is it inconsistent? Make reference to your confidence intervals of both the unfiltered and filtered datasets when answering these questions as well as your two-sided hypothesis test. Based on all this, how likely is it that a systematic bias exists within Newcomb’s&amp;nbsp;dataset?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id="how-to-submit"&gt;How to&amp;nbsp;submit&lt;/h2&gt;
+&lt;p&gt;When you are ready to submit, be sure to save, commit, and push your final result so that everything is synchronized to Github. Then, navigate to &lt;strong&gt;your copy&lt;/strong&gt; of the Github repository you used for this assignment. You should see your repository, along with the updated files that you just synchronized to Github. Confirm that your files are up-to-date, and then do the following&amp;nbsp;steps:&lt;/p&gt;
+&lt;div class="pull-request"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Click the &lt;em&gt;Pull Requests&lt;/em&gt; tab near the top of the&amp;nbsp;page.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the green button that says “New pull&amp;nbsp;request”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the dropdown menu button labeled “base:”, and select the option &lt;code&gt;starting&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Confirm that the dropdown menu button labeled “compare:” is set to &lt;code&gt;master&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the green button that says “Create pull&amp;nbsp;request”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Give the &lt;em&gt;pull request&lt;/em&gt; the following title: &lt;span class="monospace"&gt;Submission: Lab 6, FirstName LastName&lt;/span&gt;, replacing &lt;span class="monospace"&gt;FirstName&lt;/span&gt; and &lt;span class="monospace"&gt;LastName&lt;/span&gt; with your actual first and last&amp;nbsp;name.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the messagebox, write: &lt;span class="monospace"&gt;My lab report is ready for grading @jkglasbrenner&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Click “Create pull request” to lock in your&amp;nbsp;submission.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id="credits"&gt;Credits&lt;/h2&gt;
+&lt;p&gt;This lab is licensed under a &lt;a href="http://creativecommons.org/licenses/by-sa/4.0/"&gt;Creative Commons Attribution-ShareAlike 4.0 International License&lt;/a&gt;. Exercises and instructions written by James Glasbrenner for &lt;span class="caps"&gt;CDS&lt;/span&gt;-102.&lt;/p&gt;
+&lt;h2 id="references" class="unnumbered"&gt;References&lt;/h2&gt;
+&lt;div id="refs" class="references"&gt;
+&lt;div id="ref-stigler:robust"&gt;
+&lt;p&gt;[1] &lt;span class="caps"&gt;S. M.&lt;/span&gt; Stigler, “Do Robust Estimators Work with &lt;span class="caps"&gt;REAL&lt;/span&gt; Data? (With Discussion),” Annals of Statistics &lt;strong&gt;5&lt;/strong&gt;, 1055&amp;nbsp;(1977).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="ref-Newcomb:1882"&gt;
+&lt;p&gt;[2] S. Newcomb, “Measures of the Velocity of Light Made Under the Direction of the Secretary of the Navy During the Years 1880-’82,” Astronomical Papers &lt;strong&gt;3&lt;/strong&gt;, 107&amp;nbsp;(1882).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="ref-jaffe:1960"&gt;
+&lt;p&gt;[3] B. Jaffe, &lt;em&gt;Michelson and the Speed of Light&lt;/em&gt; (Doubleday; Company, Garden City, New York,&amp;nbsp;1960).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="ref-Carter:2002"&gt;
+&lt;p&gt;[4] &lt;span class="caps"&gt;W. E.&lt;/span&gt; Carter and &lt;span class="caps"&gt;M. S.&lt;/span&gt; Carter, “The Newcomb-Michelson velocity of light experiments,” Eos, Transactions American Geophysical Union &lt;strong&gt;83&lt;/strong&gt;, 405&amp;nbsp;(2002).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</content><category term="lab"></category></entry><entry><title>Mining the social web</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-05-mining-the-social-web/" rel="alternate"></link><published>2018-06-07T13:30:00-04:00</published><updated>2018-06-07T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-06-07:/labs/lab-05-mining-the-social-web/</id><summary type="html">Accessing the Twitter &lt;span class="caps"&gt;API&lt;/span&gt; using &lt;span style="monospace"&gt;rtweet&lt;/span&gt; and exploring what you can do with the harvested&amp;nbsp;data</summary><content type="html">&lt;blockquote&gt;
 &lt;p&gt;This week’s lab shows you how to access the Twitter &lt;span class="caps"&gt;API&lt;/span&gt; using the &lt;span class="monospace"&gt;rtweet&lt;/span&gt; package and what you can do with that harvested&amp;nbsp;data.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id="installing-dependencies"&gt;Installing&amp;nbsp;dependencies&lt;/h2&gt;
