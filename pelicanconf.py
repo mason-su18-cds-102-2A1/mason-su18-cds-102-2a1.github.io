@@ -105,8 +105,12 @@ RMD_READER_KNITR_OPTS_KNIT = None
 # Plugin: Pandoc Reader
 PANDOC_ARGS = [
     "--no-highlight",
+    "--bibliography",
+    "\"theme/static/bib/references.bib\"",
     "--filter",
     "pandoc-citeproc",
+    "--csl",
+    "\"theme/static/bib/apslike.csl\"",
     "--mathjax",
     "--variable",
     "\"mathjax-url:#\"",
