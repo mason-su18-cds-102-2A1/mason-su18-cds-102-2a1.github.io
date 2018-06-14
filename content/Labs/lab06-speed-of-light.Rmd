@@ -89,7 +89,6 @@ The following functions in R are useful for computing the summary statistics of 
     For the unfiltered dataset, this would be:
     ```r
     newcomb %>%
-      mutate(rank = min_rank(time)) %>%
       summarize(
         mean = mean(time),
         median = median(time),
@@ -200,7 +199,7 @@ point_estimate_difference <- abs(average_light_speed - 33.02)  # abs() computes 
 newcomb_null %>%
   filter(
     stat >= 33.02 + point_estimate_difference
-    | stat <= 33.02 - point_estimate_difference) %>%
+    | stat <= 33.02 - point_estimate_difference
   ) %>%
   summarize(pvalue = n() / 10000)
 ```
