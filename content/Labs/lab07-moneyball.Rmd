@@ -62,49 +62,13 @@ If the relationship looks linear, we can quantify the strength of the relationsh
 mlb11 %>% summarize(cor(runs, at_bats))
 ```
 
-## Sum of squared residuals
-
-When discussing the distribution of a single variable, we focus on characteristics such as *center*, *spread*, and *shape*, [click here to read a refresher on these concepts][univariate-description].
-It's also useful to be able to describe the relationship of two numerical variables, such as `runs` and `at_bats` above.
-
-@.  Looking at your plot from the previous exercise, describe the relationship between these two variables.
-    Make sure to discuss the form, direction, and strength of the relationship as well as any unusual observations.
-
-Just as we used the mean and standard deviation to summarize a single variable, we can summarize the relationship between these two variables by finding the line that best follows their association.
-**Open your *Console* window and type the following code snippet into it to launch an interactive function.**
-Running this function will display a figure in the *Plots* window on the right side of RStudio.
-You should be able to click two points on the figure, which R will then use to draw a line.
-Try and select two points that will a line that you think does the best job of going through the cloud of points.
-
-```r
-plot_ss(x = mlb11$at_bats, y = mlb11$runs)
-```
-
-Once you've done that, the line you specified will be shown in black and the residuals in blue.
-Note that there are 30 residuals, one for each of the 30 observations.
-The **residuals** are the difference between the observed values and the values predicted by the line,
-\\[\text{residual for data point at (x, y)}=\text{observed data point at (x, y)}-\text{line's prediction for at (x, y)}\\]
-The most common way to do linear regression is to select the line that minimizes the sum of squared residuals.
-To visualize the squared residuals, you can rerun the plot command and add the argument `showSquares = TRUE`.
-
-```r
-plot_ss(x = mlb11$at_bats, y = mlb11$runs, showSquares = TRUE)
-```
-
-Note that the output from the `plot_ss` function provides you with the slope and intercept of your line as well as the sum of squares.
-
-@.  Using `plot_ss`, choose a line that does a good job of minimizing the sum of squares.
-    Run the function several times.
-    What was the smallest sum of squares that you got?
-    How does it compare to your neighbors?
-
 ## The linear model
 
 It is rather cumbersome to try to get the correct least squares line, i.e. the line that minimizes the sum of squared residuals, through trial and error.
 Instead we can use the `lm` function in R to fit the linear model (a.k.a. regression line).
 
 ```r
-model1 <- lm(runs ~ at_bats, data = mlb11)
+runs_at_bats_model <- lm(runs ~ at_bats, data = mlb11)
 ```
 
 The first argument in the function `lm` is a formula that takes the form `y ~ x`.
@@ -115,7 +79,7 @@ The output of `lm` is an object that contains all of the information we need abo
 We can access this information using the summary function.
 
 ```r
-summary(model1)
+summary(runs_at_bats_model)
 ```
 
 Let's consider this output piece by piece.
@@ -149,102 +113,195 @@ Replace the placeholder words `intercept` and `slope` with your numerical values
 
 ## Prediction and prediction errors
 
-Let's create a scatterplot with the least squares line laid on top.
+After building a model, we would like to know what it predicts and what the residuals look like.
+The [modelr]{.monospace} package, which is part of the [tidyverse]{.monospace}, provides us with a function for adding the predictions to our data frame.
+To get the predictions for the model $y(\text{at\_bats})=-2789.2429+0.6305\times\text{at\_bats}$, run:
 
 ```r
-ggplot(data = mlb11) +
-  geom_point(mapping = aes(x = at_bats, y = runs)) +
-  geom_smooth(mapping = aes(x = at_bats, y = runs), method = "lm", se = FALSE)
+runs_at_bats_df <- mlb11 %>%
+  add_predictions(runs_at_bats_model)
 ```
 
-The function `geom_smooth()` with the `method="lm"` input plots the linear regression line for us.
-This line can be used to predict `runs` at any value of `at_bats`.
-When predictions are made for values of `at_bats` that are beyond the range of the observed data, it is referred to as *extrapolation* and is not usually recommended.
-However, predictions made within the range of the data are more reliable.
-They're also used to compute the residuals.
+First, let's directly compare the model with the underlying data.
+We use [ggplot2]{.monospace} to create a scatter plot and overlay the model line on top,
 
-@.  If a team manager saw the least squares regression line and not the actual data, how many runs would he or she predict for a team with 5,578 `at_bats`?
+```r
+ggplot(data = runs_at_bats_df) +
+  geom_point(mapping = aes(x = at_bats, y = runs)) +
+  geom_line(
+    mapping = aes(x = at_bats, y = pred),
+    color = "indianred3",  # color and size are used here to help the
+    size = 1               # the model line stand out.
+  )
+```
+
+Although the `pred` column in `runs_at_bats_df` only corresponds to predictions for the input values of the `at_bats` column, in general the model line allows us to predict the value of `runs` at **any** value of `at_bats`, including values that are outside the range $[5417, 5710]$.
+Predictions beyond the range of the observed data is referred to as *extrapolation*, and making strong predictions based on extrapolation is not recommended.
+Predictions made within the range of the data are considered more reliable.
+
+You have a couple of options available if you want to make predictions at values of `at_bats` not found in the `mlb11` data frame.
+If you are interested in a few specific points, then you can build a data frame by hand and pipe it into `add_predictions()`,
+
+```r
+runs_at_bats_more_pred <- data_frame(  # Creates a data frame with a column
+  at_bats = combine(5400, 5650)        # named at_bats with two values, 5400
+) %>%                                  # and 5650
+  add_predictions(runs_at_bats_model)
+```
+
+If you instead want to check predictions for a collection of points at regularly-spaced intervals, you can use the `seq_along()` function as follows:
+
+```r
+runs_at_bats_seq_pred <- data_frame(  # Creates a data frame with a column
+  at_bats = seq_range(                # named at_bats that has values
+    x = combine(5400, 5700),          # incrementing by 20 over the range
+    by = 20                           # [5400, 5700]
+  )
+) %>%
+  add_predictions(runs_at_bats_model)
+```
+
+@lm-prediction.
+    If a team manager saw the least squares regression line and not the actual data, how many runs would he or she predict for a team with 5,578 `at_bats`?
     Is this an overestimate or an underestimate, and by how much?
     In other words, what is the residual for this prediction?
 
-## Model diagnostics
+## Residuals
 
-To assess whether the linear model is reliable, we need to check for (1) linearity, (2) nearly normal residuals, and (3) constant variability.
+As implied in **Exercise @lm-prediction**, the prediction error is defined as the difference between the predicted value and the observed value is called the **residual**.
+Visually, the residual is the vertical distance from the model line to each data point.
 
-**Linearity** ---
-You already checked if the relationship between `runs` and `at_bats` is linear using a scatterplot.
-We should also verify this condition with a plot of the residuals vs. `at_bats`.
+@.  Use the following code to visualize the residuals connected to each data point,
+    
+    ```r
+    ggplot(runs_at_bats_df) +
+      geom_point(mapping = aes(x = at_bats, y = runs)) +
+      geom_line(
+        mapping = aes(x = at_bats, y = pred),
+        color = "indianred3",
+        size = 1
+      ) +
+      geom_linerange(
+        mapping = aes(x = at_bats, ymin = pred, ymax = runs),
+        linetype = "dashed"
+      )
+    ```
+    
+    Which data point appears to have the smallest residual?
+    Which data point appears to have the largest residual?
 
-```r
-ggplot(data = model1) +
-  geom_point(mapping = aes(x = at_bats, y = .resid)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  ylab("Residuals")
-```
-
-@.  Is there any apparent pattern in the residuals plot?
-    What does this indicate about the linearity of the relationship between `runs` and `at_bats`?
-
-**Nearly normal residuals** ---
-To check this condition, we can look at a histogram,
-
-```r
-ggplot(data = model1) +
-  geom_histogram(mapping = aes(x = .resid), binwidth = 25) +
-  labs(x = "Residuals")
-```
-
-or a normal probability plot of the residuals.
-First, we calculate the slope and intercept of what an ideal normal distribution for the residuals would look like:
+It is typical to visualize how a model's residuals are distributed using a histogram to get a sense of their center, shape, and overall spread.
+Before we can plot the histogram, we need to collect the residuals into a new column in our dataset.
+Just like for the predictions, [modelr]{.monospace} provides the function `add_residuals()` for this purpose,
 
 ```r
-qq_x <- qnorm(c(0.25, 0.75))
-qq_y <- quantile(model1$residuals, c(0.25, 0.75))
-qq_slope <- diff(qq_y) / diff(qq_x)
-qq_int <- qq_y[1] - qq_slope * qq_x[1]
+runs_at_bats_df2 <- runs_at_bats_df %>%
+  add_residuals(runs_at_bats_model)
 ```
 
-Then we plot the Q-Q plot and the ideal line for the residuals together:
+The residuals are added as a new column named `resid`.
+
+@.  Create a histogram of the residuals stored in `runs_at_bats_df2`.
+    Make sure you choose an appropriate bin width for the distribution.
+    What is the shape and center of the residuals?
+
+## Conditions for using a linear model
+
+Three conditions must be met in order for a linear model built using `lm()` to be reliable:
+
+:::::{.additional-questions}
+*  **Linearity:** The relationship between the explanatory variable and the response variable must be linear
+
+*  **Nearly normal residuals:** The residuals should be nearly normal (i.e. follow a bell curve shape)
+
+*  **Constant variability:** The variability of the points around the model line should be roughly constant
+:::::
+
+Let's walk through each of the three conditions and discuss what we can plot to help us assess whether the linear model is reliable.
+
+### Linearity
+
+The plot we created at the beginning of the [prediction and prediction errors](#prediction-and-prediction-errors) section already provides us with an approximate idea of whether the relationship between the explanatory and response variable is linear.
+However, there are two other types of plots that we can create that will help in our assessment, an **observed versus predicted plot** and a **residual versus predicted plot**.
+The code to make an observed versus predicted plot is,
 
 ```r
-ggplot(data = model1) +
-  geom_qq(mapping = aes(sample = .resid)) +
-  geom_abline(intercept = qq_int, slope = qq_slope) +
-  labs(y = "observed")
+ggplot(data = runs_at_bats_df2) +
+  geom_point(mapping = aes(x = pred, y = runs)) +
+  geom_abline(slope = 1, intercept = 0, color = "red")
 ```
 
-@.  Based on the histogram and the normal probability plot, does the nearly normal residuals condition appear to be met?
+and the code to make a residual versus predicted plot is,
 
-**Constant variability** ---
-To meet this condition, the variability of points around the least squares line needs to remain roughly constant. 
-In other words, the spread of the residuals should not change as you alter `at_bats`.
+```r
+ggplot(data = runs_at_bats_df2) +
+  geom_point(mapping = aes(x = pred, y = resid)) +
+  geom_ref_line(h = 0)
+```
 
-@.  Based on the plot in exercise 6, does the constant variability condition appear to be met?
+If the points in either plot appear to follow a non-linear (curved) trend, then that's a tell-tale sign that the condition for linearity has been violated.
+
+@resid-or-obs-vs-pred-plots.
+    Create the **observed versus predicted** and **residual versus predicted** plots for the `runs ~ at_bats` model.
+    Interpret the plots and conclude whether the relationship between `runs` and `at_bats` is linear or non-linear.
+
+### Nearly normal residuals
+
+The histogram we created in the [residuals](#residuals) section gives us a rough idea of whether the residuals are nearly normal, but we should have a more precise method for figuring this out.
+One such method is to build a Q-Q plot using `geom_qq()`, which is designed to show us precisely where the distribution of residuals deviates from normality.
+A reference line can also be included in the Q-Q plot, such that any points found on this line are following a normal distribution and any points away from the line are deviating from the normal distribution.
+Unfortunately, there is no input for `geom_qq()` or helper function in [ggplot2]{.monospace} that finds this reference line automatically, but computing it is straightforward.
+In fact, because the procedure is so predictable, we can define a **custom function** that computes the reference line automatically for us.
+Defining your own functions in R is a more advanced concept, and so here we're only just "dipping our toe" in, so to speak.
+  
+@.  Define the custom function `geom_qq_ref_line()` by putting the following code block in your lab report:
+    
+    ```r
+    geom_qq_ref_line <- function(data, variable) {
+      qq_x <- qnorm(p = combine(0.25, 0.75))
+      qq_y <- quantile(
+        x = pull(data, variable),
+        probs = combine(0.25, 0.75),
+        type = 1
+      )
+      qq_slope <- diff(qq_y) / diff(qq_x)
+      qq_int <- pluck(qq_y, 1) - qq_slope * pluck(qq_x, 1)
+
+      geom_abline(intercept = qq_int, slope = qq_slope)
+    }
+    ```
+
+Now that we've defined a custom function for generating reference line, let's inspect the Q-Q plot of the model residuals.
+
+@.  Create a Q-Q plot of the model's residuals using the following code:
+
+    ```r
+    ggplot(data = runs_at_bats_df2) +
+      geom_qq(mapping = aes(sample = resid)) +
+      geom_qq_ref_line(data = runs_at_bats_df2, variable = "resid")
+    ```
+    
+    Based on the resulting plot, does it appear that the condition that residuals must be nearly normal is met?
+
+### Constant variability
+
+The residual versus predicted plot you created in **Exercise @resid-or-obs-vs-pred-plots** can be used to determine whether the variability of the points around the model line remain approximately constant.
+If the residual spread seems to increase or decrease as the predicted value changes, then this condition is violated.
+
+@.  Interpret the residual versus predicted plot from **Exercise @resid-or-obs-vs-pred-plots** and conclude whether the constant variability condition is met.
 
 ## Additional questions
 
 :::::{.additional-questions}
 *   Choose another traditional variable from `mlb11` that you think might be a good predictor of `runs`.
-    Produce a scatterplot of the two variables and fit a linear model.
-    At a glance, does there seem to be a linear relationship?
-
-*   How does this relationship compare to the relationship between `runs` and `at_bats`?
-    Use the $R^2$ values from the two model summaries to compare.
+    Fit a linear model and create **observed versus predicted** and **residual versus predicted** plots (you do not need to check the conditions for using the linear model).
     Does your variable seem to predict `runs` better than `at_bats`?
-    How can you tell?
+    Determine this by comparing the $R^2$ values (obtained using `glance()`) for the two models.
 
-*   Now that you can summarize the linear relationship between two variables, investigate the relationships between `runs` and each of the other five traditional variables: `hits`, `bat_avg`, `strikeouts`, `stolen_bases`, and `wins`
-    Which variable best predicts `runs`?
-    Support your conclusion using the graphical and numerical methods we've discussed (for the sake of conciseness, only include output for the best variable, not all five).
-
-*   Now examine the three newer variables: `new_onbase`, `new_slug`, and `new_obs`.
+*   Now use one of the three newer variables, `new_onbase`, `new_slug`, and `new_obs`, to build a linear model using the same method as before.
     These are the statistics used by the author of *Moneyball* to predict a teams success.
-    In general, are they more or less effective at predicting runs than the old variables?
-    Explain using appropriate graphical and numerical evidence.
-    Of all ten variables we've analyzed, which seems to be the best predictor of `runs`?
-    Using the limited (or not so limited) information you know about these baseball statistics, does your result make sense?
-
-*   Check the model diagnostics for the regression model with the variable you decided was the best predictor for runs.
+    After fitting the model you should create **observed versus predicted** and **residual versus predicted** plots (you do not need to check the conditions for using the linear model) and also compare the new model's $R^2$ values (obtained using `glance()`) with the others.
+    Based on what you find, conclude whether the new variable is more or less effective at predicting runs than the two older variables you investigated.
 :::::
 
 ## How to submit
