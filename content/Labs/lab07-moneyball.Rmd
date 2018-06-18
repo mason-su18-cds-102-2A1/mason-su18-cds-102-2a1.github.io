@@ -1,0 +1,65 @@
+Title: <em>Moneyball</em>
+Author: Dr. Glasbrenner
+Author_Image: https://www.gravatar.com/avatar/49802fdfa5a0e63b3d932a5179d41c1e
+Date: 2018-06-19 13:30
+Tags: lab
+Slug: lab-07-moneyball
+Summary: Build predictive models of baseball data, just like in the movie <em>Moneyball</em>
+Show_summary: true
+Show_link: true
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, eval = TRUE, fig.width = 6, warning = FALSE,
+  message = FALSE, dev = "svg",
+  fig.asp = 0.618, out.width = "80%", dpi = 120,
+  fig.align = "center", cache = FALSE
+)
+suppressPackageStartupMessages(library(tidyverse))
+
+icon_pdf <- '<i class="fas fa-file-pdf" data-fa-transform="grow-16"></i>&nbsp;'
+icon_github <- '<i class="fab fa-github-alt" data-fa-transform="grow-16"></i>&nbsp;'
+```
+
+> This week's lab will show you how to build predictive models using linear regression and data collected on the 2011 Major League Baseball season.
+
+## Additional questions
+
+:::::{.additional-questions}
+:::::
+
+## How to submit
+
+When you are ready to submit, be sure to save, commit, and push your final result so that everything is synchronized to Github.
+Then, navigate to **your copy** of the Github repository you used for this assignment.
+You should see your repository, along with the updated files that you just synchronized to Github.
+Confirm that your files are up-to-date, and then do the following steps:
+
+:::::{.pull-request}
+*   Click the *Pull Requests* tab near the top of the page.
+
+*   Click the green button that says "New pull request".
+
+*   Click the dropdown menu button labeled "base:", and select the option `starting`.
+
+*   Confirm that the dropdown menu button labeled "compare:" is set to `master`.
+
+*   Click the green button that says "Create pull request".
+
+*   Give the *pull request* the following title: [Submission: Lab 7, FirstName LastName]{.monospace}, replacing [FirstName]{.monospace} and [LastName]{.monospace} with your actual first and last name.
+
+*   In the messagebox, write: [My lab report is ready for grading \@jkglasbrenner]{.monospace}.
+
+*   Click "Create pull request" to lock in your submission.
+:::::
+
+## Credits
+
+This lab, *Moneyball*, is a derivative of [OpenIntro Lab 9 – Introduction to linear regression][openintro-lab-9] by Andrew Bray and Mine Çetinkaya-Rundel, which was adapted from a lab written by the faculty and TAs of UCLA Statistics, used under [CC BY-SA 3.0][cc-by-sa-3].
+*Moneyball* is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa-4] by James Glasbrenner.
+
+## References
+
+[cc-by-sa-3]:      https://creativecommons.org/licenses/by-sa/3.0/
+[cc-by-sa-4]:      http://creativecommons.org/licenses/by-sa/4.0/
+[openintro-lab-9]: https://htmlpreview.github.io/?https://github.com/andrewpbray/oiLabs-base-R/blob/master/simple_regression/simple_regression.html
