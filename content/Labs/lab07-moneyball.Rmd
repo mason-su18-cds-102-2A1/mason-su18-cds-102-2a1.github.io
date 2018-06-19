@@ -54,68 +54,55 @@ The last three variables, `new_onbase`, `new_slug`, and `new_obs`, are the sugge
 @.  What type of plot would you use to display the relationship between `runs` and one of the other numerical variables?
     Plot this relationship using the variable `at_bats` as the explanatory variable (horizontal axis).
     Does the relationship look linear?
-    If you knew a team's `at_bats`, would you be comfortable using a linear model to predict the number of runs?
+    Explain what you've noticed in the plot that makes you think the relationship is linear (or not linear).
 
-If the relationship looks linear, we can quantify the strength of the relationship with the correlation coefficient.
+## Building a linear model
 
-```r
-mlb11 %>% summarize(cor(runs, at_bats))
-```
-
-## The linear model
-
-It is rather cumbersome to try to get the correct least squares line, i.e. the line that minimizes the sum of squared residuals, through trial and error.
-Instead we can use the `lm` function in R to fit the linear model (a.k.a. regression line).
+R provides a straightforward way to build a least-squares linear regression model with the `lm()` function. 
+The term "least-squares" refers to the method used to find the linear model, which is to minimize the sum of the squared residuals, and the **residual** is the leftover variation in the data after accounting for the model fit.
+As an example, to build a least-squares model of `runs` using `at_bats` as the explanatory variable, we write,
 
 ```r
 runs_at_bats_model <- lm(runs ~ at_bats, data = mlb11)
 ```
 
-The first argument in the function `lm` is a formula that takes the form `y ~ x`.
+The first argument in the function `lm` is a formula that takes the form `response ~ explanatory`.
 Here it can be read that we want to make a linear model of `runs` as a function of `at_bats`.
-The second argument specifies that R should look in the `mlb11` tibble to find the `runs` and `at_bats` variables.
+The second argument specifies that R should look in the `mlb11` data frame to find the `runs` and `at_bats` variables.
 
-The output of `lm` is an object that contains all of the information we need about the linear model that was just fit.
-We can access this information using the summary function.
+Having assigned the model to `runs_at_bats_model`, we can use a couple of convenience functions from the handy [broom]{.monospace} package --- this was installed when we installed [tidyverse]{.monospace} --- to get a basic overview of the model.
+To get a data frame summarizing the model parameters, we use the `tidy()` function,
 
 ```r
-summary(runs_at_bats_model)
+runs_at_bats_model %>%
+  tidy() %>%
+  as_data_frame()
 ```
 
-Let's consider this output piece by piece.
-First, the formula used to describe the model is shown at the top.
-After the formula you find the five-number summary of the residuals.
-The "Coefficients" table shown next is key; its first column displays the linear model's y-intercept and the coefficient of `at_bats`.
-With this table, we can write down the least squares regression line for the linear model:
-\\[y(\text{at\_bats})=-2789.2429+0.6305\times\text{at\_bats}\\]
-One last piece of information we will discuss from the summary output is the Multiple R-squared, or more simply, $R^2$.
+`as_data_frame()` is used to convert the base R data frame that `tidy()` returns into the now-familiar [tibble]{.monospace} format.
+This table contains the model coefficients, with the first column pertaining to the linear model's y-intercept and the coefficient (slope) of `at_bats`.
+With this table, we can write down the formal expression for the least squares regression line for our linear model:
+\\[\text{runs}(\text{at\_bats})=-2789.2429+0.6305\times\text{at\_bats}\\]
+
+Additional information about the model, such as the model's $R^2$ paramter, can be obtained using the `glance()` function:
+
+```r
+runs_at_bats_model %>%
+  glance() %>%
+  as_data_frame()
+```
+
 The $R^2$ value represents the proportion of variability in the response variable that is explained by the explanatory variable.
 For this model, 37.3% of the variability in runs is explained by `at_bats`.
 
-@.  Fit a new model that uses `homeruns` to predict `runs`.
-    Using the estimates from the R output, write the equation of the regression line.
-    What does the slope tell us in the context of the relationship between success of a team and its home runs?
-
-:::::{.callout .secondary}
-[Writing your least-squares equation in Markdown]{style="font-size: 1.7em; font-weight: bold;"}
-
-Use the following Markdown snippet as a template for writing your regression line equation in exercise 4:
-
-```markdown
-$$y(\text{homeruns}) = intercept + slope \times \text{homeruns}$$
-```
-
-The entire snippet --- including the double dollar signs \$\$ --- should be copied and then pasted onto a separate line in your RMarkdown file.
-This is pasted as part of your Markdown text, so it should *not* be placed in a code block.
-Replace the placeholder words `intercept` and `slope` with your numerical values.
-:::::
-
+@.  Fit a new model that uses `homeruns` to predict `runs` and obtain the coefficients and other details about the model using `tidy()` and `glance()`.
+    What do the intercept and the slope tell us about the relationship between the success of a team and the number of home runs its players hit during the season?
 
 ## Prediction and prediction errors
 
 After building a model, we would like to know what it predicts and what the residuals look like.
 The [modelr]{.monospace} package, which is part of the [tidyverse]{.monospace}, provides us with a function for adding the predictions to our data frame.
-To get the predictions for the model $y(\text{at\_bats})=-2789.2429+0.6305\times\text{at\_bats}$, run:
+To get the predictions for the model `runs ~ at_bats`, run:
 
 ```r
 runs_at_bats_df <- mlb11 %>%
@@ -135,7 +122,7 @@ ggplot(data = runs_at_bats_df) +
   )
 ```
 
-Although the `pred` column in `runs_at_bats_df` only corresponds to predictions for the input values of the `at_bats` column, in general the model line allows us to predict the value of `runs` at **any** value of `at_bats`, including values that are outside the range $[5417, 5710]$.
+Although the `pred` column in `runs_at_bats_df` only corresponds to predictions for the input values of the `at_bats` column, in general the model allows us to predict the value of `runs` at **any** value of `at_bats`, including values that are outside the range $[5417, 5710]$.
 Predictions beyond the range of the observed data is referred to as *extrapolation*, and making strong predictions based on extrapolation is not recommended.
 Predictions made within the range of the data are considered more reliable.
 
@@ -149,7 +136,7 @@ runs_at_bats_more_pred <- data_frame(  # Creates a data frame with a column
   add_predictions(runs_at_bats_model)
 ```
 
-If you instead want to check predictions for a collection of points at regularly-spaced intervals, you can use the `seq_along()` function as follows:
+If you instead want to check predictions for a collection of points at regularly-spaced intervals, you can use the `seq_range()` function as follows:
 
 ```r
 runs_at_bats_seq_pred <- data_frame(  # Creates a data frame with a column
@@ -168,7 +155,7 @@ runs_at_bats_seq_pred <- data_frame(  # Creates a data frame with a column
 
 ## Residuals
 
-As implied in **Exercise @lm-prediction**, the prediction error is defined as the difference between the predicted value and the observed value is called the **residual**.
+As discussed earlier, the prediction error is defined as the difference between the predicted value and the observed value is called the **residual**.
 Visually, the residual is the vertical distance from the model line to each data point.
 
 @.  Use the following code to visualize the residuals connected to each data point,
