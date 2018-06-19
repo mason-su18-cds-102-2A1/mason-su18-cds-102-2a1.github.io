@@ -1,5 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>CDS-102: Introduction to Computational and Data Sciences Lab</title><link href="https://mason-su18-cds-102-2a1.github.io/" rel="alternate"></link><link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" rel="self"></link><id>https://mason-su18-cds-102-2a1.github.io/</id><updated>2018-06-14T13:30:00-04:00</updated><entry><title>Speed of light</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-06-speed-of-light/" rel="alternate"></link><published>2018-06-14T13:30:00-04:00</published><updated>2018-06-14T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-06-14:/labs/lab-06-speed-of-light/</id><summary type="html">&lt;span style="monospace"&gt;infer&lt;/span&gt; the speed of light using Simon Newcomb&amp;#8217;s famous&amp;nbsp;dataset</summary><content type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>CDS-102: Introduction to Computational and Data Sciences Lab</title><link href="https://mason-su18-cds-102-2a1.github.io/" rel="alternate"></link><link href="https://mason-su18-cds-102-2a1.github.io/feeds/all.atom.xml" rel="self"></link><id>https://mason-su18-cds-102-2a1.github.io/</id><updated>2018-06-19T13:30:00-04:00</updated><entry><title>Moneyball</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-07-moneyball/" rel="alternate"></link><published>2018-06-19T13:30:00-04:00</published><updated>2018-06-19T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-06-19:/labs/lab-07-moneyball/</id><summary type="html">Build predictive models of baseball data, just like in the movie &lt;em&gt;Moneyball&lt;/em&gt;</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;This week’s lab will show you how to build predictive models using linear regression and data collected on the 2011 Major League Baseball&amp;nbsp;season.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="data-science-in-sports-and-at-the-movies"&gt;Data science in sports and at the&amp;nbsp;movies&lt;/h2&gt;
+&lt;p&gt;The movie &lt;a href="http://en.wikipedia.org/wiki/Moneyball_(film)"&gt;Moneyball&lt;/a&gt; focuses on the “quest for the secret of success in baseball”. It follows a low-budget team, the Oakland Athletics, who believed that underused statistics, such as a player’s ability to get on base, better predict the ability to score runs than typical statistics like home runs, RBIs (runs batted in), and batting average. Obtaining players who excelled in these underused statistics turned out to be much more affordable for the&amp;nbsp;team.&lt;/p&gt;
+&lt;h2 id="about-this-weeks-dataset"&gt;About this week’s&amp;nbsp;dataset&lt;/h2&gt;
+&lt;p&gt;This dataset is the data from the 2011 Major League Baseball (&lt;span class="caps"&gt;MLB&lt;/span&gt;) season, containing several different kinds of summary statistics for the different&amp;nbsp;teams.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class="header"&gt;
+&lt;th&gt;Variable&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;team&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Name of baseball team&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;runs&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of runs scored&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;at_bats&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of players at bat&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;hits&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of hits&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;homeruns&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of homeruns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;bat_avg&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Team batting average&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;strikeouts&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of strikeouts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;stolen_bases&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of bases stolen&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;wins&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Number of games won&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;new_onbase&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;On-base percentage&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="odd"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;new_slug&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;Slugging percentage (total bases divided by &lt;span class="monospace"&gt;at_bats&lt;/span&gt;)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="even"&gt;
+&lt;td&gt;&lt;span class="monospace"&gt;new_obs&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;On-base plus slugging percentages&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The first seven variables, &lt;code&gt;at_bats&lt;/code&gt;, &lt;code&gt;hits&lt;/code&gt;, &lt;code&gt;homeruns&lt;/code&gt;, &lt;code&gt;bat_avg&lt;/code&gt;, &lt;code&gt;strikeouts&lt;/code&gt;, &lt;code&gt;stolen_bases&lt;/code&gt;, and &lt;code&gt;wins&lt;/code&gt;, are the &lt;a href="https://en.wikipedia.org/wiki/Baseball_statistics#Commonly_used_statistics"&gt;traditionally used variables&lt;/a&gt; for baseball statistics. The last three variables, &lt;code&gt;new_onbase&lt;/code&gt;, &lt;code&gt;new_slug&lt;/code&gt;, and &lt;code&gt;new_obs&lt;/code&gt;, are the suggested variables that the author of &lt;em&gt;Moneyball&lt;/em&gt; claims were better predictors of the &lt;code&gt;runs&lt;/code&gt; variable.&lt;/p&gt;
+&lt;ol class="example" type="1"&gt;
+&lt;li&gt;What type of plot would you use to display the relationship between &lt;code&gt;runs&lt;/code&gt; and one of the other numerical variables? Plot this relationship using the variable &lt;code&gt;at_bats&lt;/code&gt; as the explanatory variable (horizontal axis). Does the relationship look linear? Explain what you’ve noticed in the plot that makes you think the relationship is linear (or not&amp;nbsp;linear).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="building-a-linear-model"&gt;Building a linear&amp;nbsp;model&lt;/h2&gt;
+&lt;p&gt;R provides a straightforward way to build a least-squares linear regression model with the &lt;code&gt;lm()&lt;/code&gt; function. The term “least-squares” refers to the method used to find the linear model, which is to minimize the sum of the squared residuals, and the &lt;strong&gt;residual&lt;/strong&gt; is the leftover variation in the data after accounting for the model fit. As an example, to build a least-squares model of &lt;code&gt;runs&lt;/code&gt; using &lt;code&gt;at_bats&lt;/code&gt; as the explanatory variable, we&amp;nbsp;write,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_model &amp;lt;- lm(runs ~ at_bats, data = mlb11)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first argument in the function &lt;code&gt;lm&lt;/code&gt; is a formula that takes the form &lt;code&gt;response ~ explanatory&lt;/code&gt;. Here it can be read that we want to make a linear model of &lt;code&gt;runs&lt;/code&gt; as a function of &lt;code&gt;at_bats&lt;/code&gt;. The second argument specifies that R should look in the &lt;code&gt;mlb11&lt;/code&gt; data frame to find the &lt;code&gt;runs&lt;/code&gt; and &lt;code&gt;at_bats&lt;/code&gt; variables.&lt;/p&gt;
+&lt;p&gt;Having assigned the model to &lt;code&gt;runs_at_bats_model&lt;/code&gt;, we can use a couple of convenience functions from the handy &lt;span class="monospace"&gt;broom&lt;/span&gt; package — this was installed when we installed &lt;span class="monospace"&gt;tidyverse&lt;/span&gt; — to get a basic overview of the model. To get a data frame summarizing the model parameters, we use the &lt;code&gt;tidy()&lt;/code&gt; function,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_model %&amp;gt;%
+  tidy() %&amp;gt;%
+  as_data_frame()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;as_data_frame()&lt;/code&gt; is used to convert the base R data frame that &lt;code&gt;tidy()&lt;/code&gt; returns into the now-familiar &lt;span class="monospace"&gt;tibble&lt;/span&gt; format. This table contains the model coefficients, with the first column pertaining to the linear model’s y-intercept and the coefficient (slope) of &lt;code&gt;at_bats&lt;/code&gt;. With this table, we can write down the formal expression for the least squares regression line for our linear model: &lt;span class="math display"&gt;\[\text{runs}(\text{at\_bats})=-2789.2429+0.6305\times\text{at\_bats}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Additional information about the model, such as the model’s &lt;span class="math inline"&gt;\(R^2\)&lt;/span&gt; paramter, can be obtained using the &lt;code&gt;glance()&lt;/code&gt; function:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_model %&amp;gt;%
+  glance() %&amp;gt;%
+  as_data_frame()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;span class="math inline"&gt;\(R^2\)&lt;/span&gt; value represents the proportion of variability in the response variable that is explained by the explanatory variable. For this model, 37.3% of the variability in runs is explained by &lt;code&gt;at_bats&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start="2" class="example" type="1"&gt;
+&lt;li&gt;Fit a new model that uses &lt;code&gt;homeruns&lt;/code&gt; to predict &lt;code&gt;runs&lt;/code&gt; and obtain the coefficients and other details about the model using &lt;code&gt;tidy()&lt;/code&gt; and &lt;code&gt;glance()&lt;/code&gt;. What do the intercept and the slope tell us about the relationship between the success of a team and the number of home runs its players hit during the&amp;nbsp;season?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="prediction-and-prediction-errors"&gt;Prediction and prediction&amp;nbsp;errors&lt;/h2&gt;
+&lt;p&gt;After building a model, we would like to know what it predicts and what the residuals look like. The &lt;span class="monospace"&gt;modelr&lt;/span&gt; package, which is part of the &lt;span class="monospace"&gt;tidyverse&lt;/span&gt;, provides us with a function for adding the predictions to our data frame. To get the predictions for the model &lt;code&gt;runs ~ at_bats&lt;/code&gt;,&amp;nbsp;run:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_df &amp;lt;- mlb11 %&amp;gt;%
+  add_predictions(runs_at_bats_model)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;First, let’s directly compare the model with the underlying data. We use &lt;span class="monospace"&gt;ggplot2&lt;/span&gt; to create a scatter plot and overlay the model line on&amp;nbsp;top,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = runs_at_bats_df) +
+  geom_point(mapping = aes(x = at_bats, y = runs)) +
+  geom_line(
+    mapping = aes(x = at_bats, y = pred),
+    color = &amp;quot;indianred3&amp;quot;,  # color and size are used here to help the
+    size = 1               # the model line stand out.
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Although the &lt;code&gt;pred&lt;/code&gt; column in &lt;code&gt;runs_at_bats_df&lt;/code&gt; only corresponds to predictions for the input values of the &lt;code&gt;at_bats&lt;/code&gt; column, in general the model allows us to predict the value of &lt;code&gt;runs&lt;/code&gt; at &lt;strong&gt;any&lt;/strong&gt; value of &lt;code&gt;at_bats&lt;/code&gt;, including values that are outside the range &lt;span class="math inline"&gt;\([5417, 5710]\)&lt;/span&gt;. Predictions beyond the range of the observed data is referred to as &lt;em&gt;extrapolation&lt;/em&gt;, and making strong predictions based on extrapolation is not recommended. Predictions made within the range of the data are considered more&amp;nbsp;reliable.&lt;/p&gt;
+&lt;p&gt;You have a couple of options available if you want to make predictions at values of &lt;code&gt;at_bats&lt;/code&gt; not found in the &lt;code&gt;mlb11&lt;/code&gt; data frame. If you are interested in a few specific points, then you can build a data frame by hand and pipe it into &lt;code&gt;add_predictions()&lt;/code&gt;,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_more_pred &amp;lt;- data_frame(  # Creates a data frame with a column
+  at_bats = combine(5400, 5650)        # named at_bats with two values, 5400
+) %&amp;gt;%                                  # and 5650
+  add_predictions(runs_at_bats_model)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you instead want to check predictions for a collection of points at regularly-spaced intervals, you can use the &lt;code&gt;seq_range()&lt;/code&gt; function as&amp;nbsp;follows:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_seq_pred &amp;lt;- data_frame(  # Creates a data frame with a column
+  at_bats = seq_range(                # named at_bats that has values
+    x = combine(5400, 5700),          # incrementing by 20 over the range
+    by = 20                           # [5400, 5700]
+  )
+) %&amp;gt;%
+  add_predictions(runs_at_bats_model)&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start="3" class="example" type="1"&gt;
+&lt;li&gt;If a team manager saw the least squares regression line and not the actual data, how many runs would he or she predict for a team with 5,578 &lt;code&gt;at_bats&lt;/code&gt;? Is this an overestimate or an underestimate, and by how much? In other words, what is the residual for this&amp;nbsp;prediction?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="residuals"&gt;Residuals&lt;/h2&gt;
+&lt;p&gt;As discussed earlier, the prediction error is defined as the difference between the predicted value and the observed value is called the &lt;strong&gt;residual&lt;/strong&gt;. Visually, the residual is the vertical distance from the model line to each data&amp;nbsp;point.&lt;/p&gt;
+&lt;ol start="4" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Use the following code to visualize the residuals connected to each data&amp;nbsp;point,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(runs_at_bats_df) +
+  geom_point(mapping = aes(x = at_bats, y = runs)) +
+  geom_line(
+    mapping = aes(x = at_bats, y = pred),
+    color = &amp;quot;indianred3&amp;quot;,
+    size = 1
+  ) +
+  geom_linerange(
+    mapping = aes(x = at_bats, ymin = pred, ymax = runs),
+    linetype = &amp;quot;dashed&amp;quot;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which data point appears to have the smallest residual? Which data point appears to have the largest&amp;nbsp;residual?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;It is typical to visualize how a model’s residuals are distributed using a histogram to get a sense of their center, shape, and overall spread. Before we can plot the histogram, we need to collect the residuals into a new column in our dataset. Just like for the predictions, &lt;span class="monospace"&gt;modelr&lt;/span&gt; provides the function &lt;code&gt;add_residuals()&lt;/code&gt; for this&amp;nbsp;purpose,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;runs_at_bats_df2 &amp;lt;- runs_at_bats_df %&amp;gt;%
+  add_residuals(runs_at_bats_model)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The residuals are added as a new column named &lt;code&gt;resid&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start="5" class="example" type="1"&gt;
+&lt;li&gt;Create a histogram of the residuals stored in &lt;code&gt;runs_at_bats_df2&lt;/code&gt;. Make sure you choose an appropriate bin width for the distribution. What is the shape and center of the&amp;nbsp;residuals?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="conditions-for-using-a-linear-model"&gt;Conditions for using a linear&amp;nbsp;model&lt;/h2&gt;
+&lt;p&gt;Three conditions must be met in order for a linear model built using &lt;code&gt;lm()&lt;/code&gt; to be&amp;nbsp;reliable:&lt;/p&gt;
+&lt;div class="additional-questions"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Linearity:&lt;/strong&gt; The relationship between the explanatory variable and the response variable must be&amp;nbsp;linear&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Nearly normal residuals:&lt;/strong&gt; The residuals should be nearly normal (i.e. follow a bell curve&amp;nbsp;shape)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Constant variability:&lt;/strong&gt; The variability of the points around the model line should be roughly&amp;nbsp;constant&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Let’s walk through each of the three conditions and discuss what we can plot to help us assess whether the linear model is&amp;nbsp;reliable.&lt;/p&gt;
+&lt;h3 id="linearity"&gt;Linearity&lt;/h3&gt;
+&lt;p&gt;The plot we created at the beginning of the &lt;a href="#prediction-and-prediction-errors"&gt;prediction and prediction errors&lt;/a&gt; section already provides us with an approximate idea of whether the relationship between the explanatory and response variable is linear. However, there are two other types of plots that we can create that will help in our assessment, an &lt;strong&gt;observed versus predicted plot&lt;/strong&gt; and a &lt;strong&gt;residual versus predicted plot&lt;/strong&gt;. The code to make an observed versus predicted plot&amp;nbsp;is,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = runs_at_bats_df2) +
+  geom_point(mapping = aes(x = pred, y = runs)) +
+  geom_abline(slope = 1, intercept = 0, color = &amp;quot;red&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and the code to make a residual versus predicted plot&amp;nbsp;is,&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = runs_at_bats_df2) +
+  geom_point(mapping = aes(x = pred, y = resid)) +
+  geom_ref_line(h = 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If the points in either plot appear to follow a non-linear (curved) trend, then that’s a tell-tale sign that the condition for linearity has been&amp;nbsp;violated.&lt;/p&gt;
+&lt;ol start="6" class="example" type="1"&gt;
+&lt;li&gt;Create the &lt;strong&gt;observed versus predicted&lt;/strong&gt; and &lt;strong&gt;residual versus predicted&lt;/strong&gt; plots for the &lt;code&gt;runs ~ at_bats&lt;/code&gt; model. Interpret the plots and conclude whether the relationship between &lt;code&gt;runs&lt;/code&gt; and &lt;code&gt;at_bats&lt;/code&gt; is linear or&amp;nbsp;non-linear.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="nearly-normal-residuals"&gt;Nearly normal&amp;nbsp;residuals&lt;/h3&gt;
+&lt;p&gt;The histogram we created in the &lt;a href="#residuals"&gt;residuals&lt;/a&gt; section gives us a rough idea of whether the residuals are nearly normal, but we should have a more precise method for figuring this out. One such method is to build a Q-Q plot using &lt;code&gt;geom_qq()&lt;/code&gt;, which is designed to show us precisely where the distribution of residuals deviates from normality. A reference line can also be included in the Q-Q plot, such that any points found on this line are following a normal distribution and any points away from the line are deviating from the normal distribution. Unfortunately, there is no input for &lt;code&gt;geom_qq()&lt;/code&gt; or helper function in &lt;span class="monospace"&gt;ggplot2&lt;/span&gt; that finds this reference line automatically, but computing it is straightforward. In fact, because the procedure is so predictable, we can define a &lt;strong&gt;custom function&lt;/strong&gt; that computes the reference line automatically for us. Defining your own functions in R is a more advanced concept, and so here we’re only just “dipping our toe” in, so to&amp;nbsp;speak.&lt;/p&gt;
+&lt;ol start="7" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Define the custom function &lt;code&gt;geom_qq_ref_line()&lt;/code&gt; by putting the following code block in your lab&amp;nbsp;report:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;geom_qq_ref_line &amp;lt;- function(data, variable) {
+  qq_x &amp;lt;- qnorm(p = combine(0.25, 0.75))
+  qq_y &amp;lt;- quantile(
+    x = pull(data, variable),
+    probs = combine(0.25, 0.75),
+    type = 1
+  )
+  qq_slope &amp;lt;- diff(qq_y) / diff(qq_x)
+  qq_int &amp;lt;- pluck(qq_y, 1) - qq_slope * pluck(qq_x, 1)
+
+  geom_abline(intercept = qq_int, slope = qq_slope)
+}&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now that we’ve defined a custom function for generating reference line, let’s inspect the Q-Q plot of the model&amp;nbsp;residuals.&lt;/p&gt;
+&lt;ol start="8" class="example" type="1"&gt;
+&lt;li&gt;&lt;p&gt;Create a Q-Q plot of the model’s residuals using the following&amp;nbsp;code:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;ggplot(data = runs_at_bats_df2) +
+  geom_qq(mapping = aes(sample = resid)) +
+  geom_qq_ref_line(data = runs_at_bats_df2, variable = &amp;quot;resid&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Based on the resulting plot, does it appear that the condition that residuals must be nearly normal is&amp;nbsp;met?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="constant-variability"&gt;Constant&amp;nbsp;variability&lt;/h3&gt;
+&lt;p&gt;The residual versus predicted plot you created in &lt;strong&gt;Exercise 6&lt;/strong&gt; can be used to determine whether the variability of the points around the model line remain approximately constant. If the residual spread seems to increase or decrease as the predicted value changes, then this condition is&amp;nbsp;violated.&lt;/p&gt;
+&lt;ol start="9" class="example" type="1"&gt;
+&lt;li&gt;Interpret the residual versus predicted plot from &lt;strong&gt;Exercise 6&lt;/strong&gt; and conclude whether the constant variability condition is&amp;nbsp;met.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="additional-questions"&gt;Additional&amp;nbsp;questions&lt;/h2&gt;
+&lt;div class="additional-questions"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Choose another traditional variable from &lt;code&gt;mlb11&lt;/code&gt; that you think might be a good predictor of &lt;code&gt;runs&lt;/code&gt;. Fit a linear model and create &lt;strong&gt;observed versus predicted&lt;/strong&gt; and &lt;strong&gt;residual versus predicted&lt;/strong&gt; plots (you do not need to check the conditions for using the linear model). Does your variable seem to predict &lt;code&gt;runs&lt;/code&gt; better than &lt;code&gt;at_bats&lt;/code&gt;? Determine this by comparing the &lt;span class="math inline"&gt;\(R^2\)&lt;/span&gt; values (obtained using &lt;code&gt;glance()&lt;/code&gt;) for the two&amp;nbsp;models.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Now use one of the three newer variables, &lt;code&gt;new_onbase&lt;/code&gt;, &lt;code&gt;new_slug&lt;/code&gt;, and &lt;code&gt;new_obs&lt;/code&gt;, to build a linear model using the same method as before. These are the statistics used by the author of &lt;em&gt;Moneyball&lt;/em&gt; to predict a teams success. After fitting the model you should create &lt;strong&gt;observed versus predicted&lt;/strong&gt; and &lt;strong&gt;residual versus predicted&lt;/strong&gt; plots (you do not need to check the conditions for using the linear model) and also compare the new model’s &lt;span class="math inline"&gt;\(R^2\)&lt;/span&gt; values (obtained using &lt;code&gt;glance()&lt;/code&gt;) with the others. Based on what you find, conclude whether the new variable is more or less effective at predicting runs than the two older variables you&amp;nbsp;investigated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id="how-to-submit"&gt;How to&amp;nbsp;submit&lt;/h2&gt;
+&lt;p&gt;When you are ready to submit, be sure to save, commit, and push your final result so that everything is synchronized to Github. Then, navigate to &lt;strong&gt;your copy&lt;/strong&gt; of the Github repository you used for this assignment. You should see your repository, along with the updated files that you just synchronized to Github. Confirm that your files are up-to-date, and then do the following&amp;nbsp;steps:&lt;/p&gt;
+&lt;div class="pull-request"&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Click the &lt;em&gt;Pull Requests&lt;/em&gt; tab near the top of the&amp;nbsp;page.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the green button that says “New pull&amp;nbsp;request”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the dropdown menu button labeled “base:”, and select the option &lt;code&gt;starting&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Confirm that the dropdown menu button labeled “compare:” is set to &lt;code&gt;master&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click the green button that says “Create pull&amp;nbsp;request”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Give the &lt;em&gt;pull request&lt;/em&gt; the following title: &lt;span class="monospace"&gt;Submission: Lab 7, FirstName LastName&lt;/span&gt;, replacing &lt;span class="monospace"&gt;FirstName&lt;/span&gt; and &lt;span class="monospace"&gt;LastName&lt;/span&gt; with your actual first and last&amp;nbsp;name.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the messagebox, write: &lt;span class="monospace"&gt;My lab report is ready for grading @jkglasbrenner&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Click “Create pull request” to lock in your&amp;nbsp;submission.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id="credits"&gt;Credits&lt;/h2&gt;
+&lt;p&gt;This lab, &lt;em&gt;Moneyball&lt;/em&gt;, is a derivative of &lt;a href="https://htmlpreview.github.io/?https://github.com/andrewpbray/oiLabs-base-R/blob/master/simple_regression/simple_regression.html"&gt;OpenIntro Lab 9 – Introduction to linear regression&lt;/a&gt; by Andrew Bray and Mine Çetinkaya-Rundel, which was adapted from a lab written by the faculty and TAs of &lt;span class="caps"&gt;UCLA&lt;/span&gt; Statistics, used under &lt;a href="https://creativecommons.org/licenses/by-sa/3.0/"&gt;&lt;span class="caps"&gt;CC&lt;/span&gt; &lt;span class="caps"&gt;BY&lt;/span&gt;-&lt;span class="caps"&gt;SA&lt;/span&gt; 3.0&lt;/a&gt;. &lt;em&gt;Moneyball&lt;/em&gt; is licensed under a &lt;a href="http://creativecommons.org/licenses/by-sa/4.0/"&gt;Creative Commons Attribution-ShareAlike 4.0 International License&lt;/a&gt; by James&amp;nbsp;Glasbrenner.&lt;/p&gt;
+</content><category term="lab"></category></entry><entry><title>Speed of light</title><link href="https://mason-su18-cds-102-2a1.github.io/labs/lab-06-speed-of-light/" rel="alternate"></link><published>2018-06-14T13:30:00-04:00</published><updated>2018-06-14T13:30:00-04:00</updated><author><name>Dr. Glasbrenner</name></author><id>tag:mason-su18-cds-102-2a1.github.io,2018-06-14:/labs/lab-06-speed-of-light/</id><summary type="html">&lt;span style="monospace"&gt;infer&lt;/span&gt; the speed of light using Simon Newcomb&amp;#8217;s famous&amp;nbsp;dataset</summary><content type="html">&lt;blockquote&gt;
 &lt;p&gt;This week’s lab will show you how to apply statistical methods and resampling techniques to a dataset from the natural sciences, Simon Newcomb’s measurements of the speed of light. Through this, we will see how statistical methods can help us to put the scientific method into practice and provide you with hands-on experience with the kinds of data analysis a scientist will use after completing a series of experimental&amp;nbsp;measurements.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id="natural-science-data-science"&gt;Natural science, data&amp;nbsp;science&lt;/h2&gt;
